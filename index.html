@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Timur Maksutov | Interactive Portfolio</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="cv.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
@@ -21,13 +22,13 @@
             
             <!-- Hotspots -->
             <!-- 1. My Head (Summary) -->
-            <div class="hotspot" id="spot-summary" style="top: 48%; left: 50%; width: 12%; height: 20%;">
+            <div class="hotspot" id="spot-summary" style="top: 48%; left: 50%; width: 12%; height: 20%;" onclick="openModal('modal-summary')">
                 <div class="hotspot-label">Executive Summary</div>
                 <div class="hotspot-summary">Tech leader, AI expert and Data Scientist with over 15 years expertise in Software projects within Oil & Gas and MedTech industries.</div>
             </div>
 
             <!-- 2. Toys on Shelves (Career Path) -->
-            <div class="hotspot" id="spot-experience" style="top: 5%; left: 10%; width: 35%; height: 20%;">
+            <div class="hotspot" id="spot-experience" style="top: 5%; left: 10%; width: 35%; height: 20%;" onclick="openModal('modal-experience')">
                 <div class="hotspot-label">Career Journey</div>
                 <div class="hotspot-summary">
                     Product Lifecycle Manager | Belimed AG (2021–Present)<br>
@@ -39,50 +40,50 @@
             </div>
 
             <!-- 3. Books on Shelves (Skills) -->
-            <div class="hotspot" id="spot-stack" style="top: 25%; left: 5%; width: 40%; height: 25%;">
+            <div class="hotspot" id="spot-stack" style="top: 25%; left: 5%; width: 40%; height: 25%;" onclick="openModal('modal-stack')">
                 <div class="hotspot-label">Skills & Expertise</div>
                 <div class="hotspot-summary">PM: R&D, Agile, SAFe, QMS<br>ML: Python, Deep Learning, Azure<br>Dev: IoT, SCADA, PLC, QA</div>
             </div>
 
             <!-- 4. Business Cards (Full Contacts) -->
-            <div class="hotspot" id="spot-contacts" style="top: 88%; left: 5%; width: 15%; height: 12%;">
+            <div class="hotspot" id="spot-contacts" style="top: 88%; left: 5%; width: 15%; height: 12%;" onclick="openModal('modal-contacts')">
                 <div class="hotspot-label">Full Contacts</div>
                 <div class="hotspot-summary">Zug, CH | +41 79 578 9152<br>maksutov.ch@gmail.com<br>Residence Permit C</div>
             </div>
 
-            <!-- 5. A4 Paper (Education) -->
-            <div class="hotspot" id="spot-cv" style="top: 82%; left: 20%; width: 18%; height: 15%;">
-                <div class="hotspot-label">Education</div>
-                <div class="hotspot-summary">M.Sc. Computer Engineering (Honors)<br>Gubkin University (Moscow)</div>
+            <!-- 5. A4 Paper (CV) -->
+            <div class="hotspot" id="spot-cv" style="top: 82%; left: 20%; width: 18%; height: 15%;" onclick="openModal('modal-cv')">
+                <div class="hotspot-label">Curriculum Vitae</div>
+                <div class="hotspot-summary">Professional Experience & Skills<br>Click to view PDF</div>
             </div>
 
             <!-- 6. Flags on Table (Languages) -->
-            <div class="hotspot" id="spot-languages" style="top: 62%; left: 43%; width: 10%; height: 12%;">
+            <div class="hotspot" id="spot-languages" style="top: 62%; left: 43%; width: 10%; height: 12%;" onclick="openModal('modal-contacts')">
                 <div class="hotspot-pulse"></div>
                 <div class="hotspot-label">Languages</div>
                 <div class="hotspot-summary">English: C1<br>German: B1<br>Russian: Native</div>
             </div>
 
             <!-- 7. Monitors (Side Projects) -->
-            <div class="hotspot" id="spot-projects" style="top: 52%; left: 18%; width: 28%; height: 30%;">
+            <div class="hotspot" id="spot-projects" style="top: 52%; left: 18%; width: 28%; height: 30%;" onclick="openModal('modal-projects')">
                 <div class="hotspot-label">Side Projects</div>
                 <div class="hotspot-summary">gas-flows.com<br>data-forecast.com</div>
             </div>
 
             <!-- 8. Drawing Rolls (Industrial Projects) -->
-            <div class="hotspot" id="spot-engineering" style="top: 75%; left: 80%; width: 20%; height: 25%;">
+            <div class="hotspot" id="spot-engineering" style="top: 75%; left: 80%; width: 20%; height: 25%;" onclick="openModal('modal-experience')">
                 <div class="hotspot-label">Industrial Projects</div>
                 <div class="hotspot-summary">Computer Vision<br>MedTech Equipment<br>Gas Flow Diagrams</div>
             </div>
 
             <!-- 9. Wall (Certifications) -->
-            <div class="hotspot" id="spot-certs" style="top: 10%; left: 52%; width: 20%; height: 45%;">
+            <div class="hotspot" id="spot-certs" style="top: 10%; left: 52%; width: 20%; height: 45%;" onclick="openModal('modal-certs')">
                 <div class="hotspot-label">Certifications</div>
                 <div class="hotspot-summary">Google PM | ISTQB | Azure AI<br>ISO 31000 | 9001 | 13485<br>IBM Data | Six Sigma</div>
             </div>
 
             <!-- 10. Window (Location & Permit) -->
-            <div class="hotspot" id="spot-permit" style="top: 20%; left: 75%; width: 20%; height: 50%;">
+            <div class="hotspot" id="spot-permit" style="top: 20%; left: 75%; width: 20%; height: 50%;" onclick="openModal('modal-contacts')">
                 <div class="hotspot-label">Location & Permit</div>
                 <div class="hotspot-summary">Zug, Switzerland<br>Residence Permit C</div>
             </div>
@@ -144,19 +145,32 @@
             <div class="job"><b>NPF Inkram</b> <small>(2010-13)</small><br>Automation System Engineer. PLC gas detection and control systems.</div>
         </div>
 
-        <!-- 5. Education Modal -->
-        <div class="modal-content glass" id="modal-education" onclick="event.stopPropagation()">
+        <!-- 5. CV Modal (Floating Pages) -->
+        <div class="modal-content cv-modal-spread" id="modal-cv">
             <span class="close-btn" onclick="closeModals()">&times;</span>
-            <h2 class="section-title"><i data-lucide="library"></i> Education</h2>
-            <div class="edu-block" style="margin-bottom: 2rem;">
-                <h3>Master of Science in Computer Engineering (Honors)</h3>
-                <p>Gubkin Russian State University of Oil and Gas (2010)</p>
+            
+            <div class="floating-pages-container" onclick="event.stopPropagation()">
+                <!-- Page 1 -->
+                <div class="cv-page page-left">
+                    <img src="cv1.jpg" alt="CV Page 1">
+                    <!-- Fallback if you prefer PDF: <iframe src="CV.pdf#page=1&toolbar=0" frameborder="0"></iframe> -->
+                </div>
+                <!-- Page 2 -->
+                <div class="cv-page page-right">
+                    <img src="cv2.jpg" alt="CV Page 2">
+                    <!-- Fallback if you prefer PDF: <iframe src="CV.pdf#page=2&toolbar=0" frameborder="0"></iframe> -->
+                </div>
             </div>
-            <div class="edu-block">
-                <h3>Bachelor of Science in Electrical Engineering</h3>
-                <p>Gubkin Russian State University of Oil and Gas (2008)</p>
-            </div>
+
         </div>
+
+        <div class="cv-actions" id="cv-actions" onclick="event.stopPropagation()">
+            <a href="CV.pdf" target="_blank" class="open-pdf-btn"><i data-lucide="external-link"></i> Open PDF</a>
+            <a href="CV.pdf" download class="download-btn"><i data-lucide="download"></i> Download Full CV</a>
+            <button class="close-cv-btn" onclick="closeModals()">Close Preview</button>
+        </div>
+
+    </div>
 
         <!-- 6. Certifications Modal -->
         <div class="modal-content glass" id="modal-certs" onclick="event.stopPropagation()">
@@ -193,6 +207,7 @@
     </div>
 
     <script src="script.js"></script>
+    <script src="cv.js"></script>
     <script>lucide.createIcons();</script>
 </body>
 </html>

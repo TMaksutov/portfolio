@@ -1,0 +1,147 @@
+/* ============================================================
+   CV FLOATING SPREAD & 3D INTERACTION STYLES
+   ============================================================ */
+
+/* CV Specific Modal - Floating Spread */
+.cv-modal-spread {
+    width: 95vw;
+    max-width: 1400px;
+    height: 95vh;
+    background: none !important; /* No container background */
+    backdrop-filter: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.cv-modal-spread.active {
+    display: flex;
+}
+
+.floating-pages-container {
+    display: flex;
+    gap: 2rem;
+    perspective: 2000px;
+    width: 100%;
+    justify-content: center;
+}
+
+.cv-page {
+    width: 550px;
+    height: 770px; /* A4 Ratio */
+    background: white;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.4);
+    border-radius: 4px;
+    overflow: hidden; 
+    transition: transform 1s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 1s ease, opacity 1s ease;
+    position: relative;
+    z-index: 1;
+}
+
+.cv-page img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    /* Quality Optimizations */
+    image-rendering: -webkit-optimize-contrast; 
+    will-change: transform;
+    backface-visibility: hidden;
+    transform: translateZ(0); /* Force GPU High-Quality mode */
+}
+
+/* 3D Spread Effect (Initial Position) */
+.page-left {
+    transform: rotateY(15deg) translateZ(50px);
+    transform-origin: right center;
+}
+
+.page-right {
+    transform: rotateY(-15deg) translateZ(50px);
+    transform-origin: left center;
+}
+
+/* Individual Page Zoom Class (Controlled by cv.js) */
+.cv-page.zoomed {
+    z-index: 100;
+    box-shadow: 0 50px 100px rgba(0,0,0,0.9);
+    cursor: crosshair;
+}
+
+.floating-pages-container:has(.cv-page:hover) .cv-page:not(:hover) {
+    /* Keep visible but slightly pushed back */
+    transform: rotateY(20deg) translateZ(-20px);
+}
+
+/* CV ACTIONS TOOLBAR */
+.cv-actions {
+    position: fixed;
+    bottom: 3rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: none; /* Hidden unless modal-cv is active */
+    gap: 1.5rem;
+    z-index: 2000;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(10px);
+    padding: 1rem 2rem;
+    border-radius: 3rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cv-modal-spread.active ~ .cv-actions {
+    display: flex;
+}
+
+.open-pdf-btn, .download-btn, .close-cv-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.5rem;
+    border-radius: 2rem;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.open-pdf-btn {
+    background: #4f46e5;
+    color: white;
+}
+
+.open-pdf-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(79, 70, 229, 0.4);
+    filter: brightness(1.1);
+}
+
+.download-btn {
+    background: var(--primary-color);
+    color: white;
+}
+
+.download-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
+    filter: brightness(1.1);
+}
+
+.close-cv-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.close-cv-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Hide default close button for CV spread */
+.cv-modal-spread .close-btn {
+    display: none;
+}

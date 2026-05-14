@@ -22,9 +22,9 @@ body { background: #000; color: var(--text-main); font-family: 'Inter', sans-ser
     position: absolute;
     top: 0;
     left: 0;
-    width: 110%; /* Larger to allow panning */
-    height: 110%;
-    transform: translate(-5%, -5%); /* Center initially */
+    width: 120%; /* Increased for wider view */
+    height: 120%;
+    transform: translate(-10%, -10%); /* Adjust centering */
     transition: transform 0.15s ease-out; /* Smooth movement */
 }
 
@@ -182,7 +182,7 @@ body { background: #000; color: var(--text-main); font-family: 'Inter', sans-ser
     z-index: 100;
     display: none;
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: opacity 1s ease;
     pointer-events: auto; /* Click to close */
 }
 
@@ -200,7 +200,7 @@ body { background: #000; color: var(--text-main); font-family: 'Inter', sans-ser
     display: none;
     opacity: 0;
     transform: scale(0.95);
-    transition: transform 0.3s ease, opacity 0.3s ease;
+    transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1), opacity 1s ease;
 }
 
 .modal-content.active {

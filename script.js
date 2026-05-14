@@ -17,8 +17,8 @@ document.addEventListener('mousemove', (e) => {
     // 1. Handle Global Room Parallax (Pan)
     const px = mouseX / window.innerWidth;
     const py = mouseY / window.innerHeight;
-    const moveX = (px * -10); 
-    const moveY = (py * -10);
+    const moveX = (px * -20); 
+    const moveY = (py * -20);
     panWrapper.style.transform = `translate(${moveX}%, ${moveY}%)`;
 
     // 2. Handle 3D Rotation for Hovered Hotspot
@@ -51,3 +51,43 @@ document.addEventListener('mousemove', (e) => {
         }
     });
 });
+
+// Modal Logic
+function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (!modal) return;
+
+    // Show overlay
+    overlay.classList.add('show');
+    
+    // Hide all other modals first
+    document.querySelectorAll('.modal-content').forEach(m => m.classList.remove('active'));
+    
+    // Show target modal
+    modal.classList.add('active');
+    
+    // Position modal in center
+    modal.style.left = '50%';
+    modal.style.top = '50%';
+    modal.style.transform = 'translate(-50%, -50%) scale(1)';
+
+    // Blur background
+    roomContainer.classList.add('blurred');
+}
+
+function closeModals() {
+    overlay.classList.remove('show');
+    document.querySelectorAll('.modal-content').forEach(m => {
+        m.classList.remove('active');
+        m.style.transform = 'translate(-50%, -50%) scale(0.95)';
+    });
+    roomContainer.classList.remove('blurred');
+}
+
+// Initial positioning for modals (centered)
+document.querySelectorAll('.modal-content').forEach(modal => {
+    modal.style.left = '50%';
+    modal.style.top = '50%';
+    modal.style.transform = 'translate(-50%, -50%) scale(0.95)';
+});
+

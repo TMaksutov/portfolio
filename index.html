@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio | Creative Developer</title>
+    <meta name="description" content="A showcase of creative development projects and modern web design.">
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <nav id="navbar">
+        <div class="logo">PORTFOLIO.</div>
+        <div class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#projects">Projects</a>
+            <a href="#about">About</a>
+            <a href="#contact">Contact</a>
+        </div>
+    </nav>
+
+    <section id="home" class="hero">
+        <h1>Building Digital Experiences</h1>
+        <p>A passionate developer focused on creating beautiful, functional, and user-centric web applications with modern technologies.</p>
+        <a href="#projects" class="cta-button">View My Work</a>
+    </section>
+
+    <section id="projects" class="section">
+        <h2 class="section-title">Selected Projects</h2>
+        <div class="project-grid">
+            <!-- Project 1 -->
+            <div class="project-card glass">
+                <div class="project-image">
+                    <img src="project1.png" alt="Project 1">
+                </div>
+                <h3>E-commerce Redesign</h3>
+                <p>A complete overhaul of a luxury brand's online presence with focus on conversion and speed.</p>
+                <div class="tags">
+                    <span class="tag">React</span>
+                    <span class="tag">Next.js</span>
+                    <span class="tag">Stripe</span>
+                </div>
+            </div>
+
+            <!-- Project 2 -->
+            <div class="project-card glass">
+                <div class="project-image">
+                    <img src="project2.png" alt="Project 2">
+                </div>
+                <h3>SaaS Dashboard</h3>
+                <p>Interactive data visualization and user management system for a B2B SaaS platform.</p>
+                <div class="tags">
+                    <span class="tag">Vue.js</span>
+                    <span class="tag">D3.js</span>
+                    <span class="tag">Firebase</span>
+                </div>
+            </div>
+
+            <!-- Project 3 -->
+            <div class="project-card glass">
+                <div class="project-image">
+                    <img src="project3.png" alt="Project 3">
+                </div>
+                <h3>AI Art Generator</h3>
+                <p>Web interface for generating art using stable diffusion models with custom prompts.</p>
+                <div class="tags">
+                    <span class="tag">Python</span>
+                    <span class="tag">FastAPI</span>
+                    <span class="tag">React</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="section">
+        <h2 class="section-title">About Me</h2>
+        <div style="max-width: 800px; margin: 0 auto; text-align: center;">
+            <p>I am a creative developer with a background in design and a passion for clean code. I believe that the best products are built at the intersection of aesthetics and performance.</p>
+        </div>
+    </section>
+
+    <footer id="contact">
+        <h2 class="section-title">Get In Touch</h2>
+        <p>Looking for a new project? Let's talk.</p>
+        <div style="margin-top: 2rem;">
+            <a href="mailto:hello@example.com" class="cta-button">Say Hello</a>
+        </div>
+        <div style="margin-top: 4rem;">
+            <p>&copy; 2026 Portfolio Template. Built with passion.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>

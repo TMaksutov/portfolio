@@ -1,44 +1,53 @@
-// Navbar scroll effect
-const navbar = document.getElementById('navbar');
-window.addEventListener('scroll', () => {
-    if (window.scrollY > 50) {
-        navbar.classList.add('scrolled');
-    } else {
-        navbar.classList.remove('scrolled');
-    }
+const overlay = document.getElementById('global-overlay');
+const roomContainer = document.querySelector('.room-container');
+const panWrapper = document.getElementById('pan-wrapper');
+const hotspots = document.querySelectorAll('.hotspot');
+
+// Focus Effect Logic (Dim others)
+hotspots.forEach(hotspot => {
+    hotspot.addEventListener('mouseenter', () => panWrapper.classList.add('has-hover'));
+    hotspot.addEventListener('mouseleave', () => panWrapper.classList.remove('has-hover'));
 });
 
-// Smooth scroll for navigation links
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
+// Parallax & 3D Hover Rotation Logic
+document.addEventListener('mousemove', (e) => {
+    const mouseX = e.clientX;
+    const mouseY = e.clientY;
+
+    // 1. Handle Global Room Parallax (Pan)
+    const px = mouseX / window.innerWidth;
+    const py = mouseY / window.innerHeight;
+    const moveX = (px * -10); 
+    const moveY = (py * -10);
+    panWrapper.style.transform = `translate(${moveX}%, ${moveY}%)`;
+
+    // 2. Handle 3D Rotation for Hovered Hotspot
+    hotspots.forEach(hotspot => {
+        const rect = hotspot.getBoundingClientRect();
+        
+        // Check if mouse is inside this hotspot (with a little padding)
+        if (mouseX >= rect.left - 50 && mouseX <= rect.right + 50 &&
+            mouseY >= rect.top - 50 && mouseY <= rect.bottom + 50) {
+            
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            const dx = (mouseX - centerX) / (rect.width / 2 + 50);
+            const dy = (mouseY - centerY) / (rect.height / 2 + 50);
+            
+            const rotateX = -dy * 25; 
+            const rotateY = dx * 25;
+            
+            const label = hotspot.querySelector('.hotspot-label');
+            const summary = hotspot.querySelector('.hotspot-summary');
+            
+            if (label) label.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(20px)`;
+            if (summary) summary.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(10px)`;
+        } else {
+            const label = hotspot.querySelector('.hotspot-label');
+            const summary = hotspot.querySelector('.hotspot-summary');
+            if (label) label.style.transform = `rotateX(0) rotateY(0) translateZ(0)`;
+            if (summary) summary.style.transform = `rotateX(0) rotateY(0) translateZ(0) translateY(10px)`;
         }
     });
-});
-
-// Reveal animations on scroll
-const observerOptions = {
-    threshold: 0.1
-};
-
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-        }
-    });
-}, observerOptions);
-
-document.querySelectorAll('.project-card').forEach(card => {
-    card.style.opacity = '0';
-    card.style.transform = 'translateY(20px)';
-    card.style.transition = 'all 0.6s ease-out';
-    observer.observe(card);
 });

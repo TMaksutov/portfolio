@@ -17,8 +17,9 @@ document.addEventListener('mousemove', (e) => {
     // 1. Handle Global Room Parallax (Pan)
     const px = mouseX / window.innerWidth;
     const py = mouseY / window.innerHeight;
-    const moveX = (px * -20); 
-    const moveY = (py * -20);
+    const panRange = 16.66; // (120 - 100) / 120 * 100 = 16.66%
+    const moveX = (px * -panRange); 
+    const moveY = (py * -panRange);
     panWrapper.style.transform = `translate(${moveX}%, ${moveY}%)`;
 
     // 2. Handle 3D Rotation for Hovered Hotspot
@@ -26,8 +27,8 @@ document.addEventListener('mousemove', (e) => {
         const rect = hotspot.getBoundingClientRect();
         
         // Check if mouse is inside this hotspot (with a little padding)
-        if (mouseX >= rect.left - 50 && mouseX <= rect.right + 50 &&
-            mouseY >= rect.top - 50 && mouseY <= rect.bottom + 50) {
+        if (mouseX >= rect.left - 10 && mouseX <= rect.right + 10 &&
+            mouseY >= rect.top - 10 && mouseY <= rect.bottom + 10) {
             
             const centerX = rect.left + rect.width / 2;
             const centerY = rect.top + rect.height / 2;
@@ -35,8 +36,8 @@ document.addEventListener('mousemove', (e) => {
             const dx = (mouseX - centerX) / (rect.width / 2 + 50);
             const dy = (mouseY - centerY) / (rect.height / 2 + 50);
             
-            const rotateX = -dy * 25; 
-            const rotateY = dx * 25;
+            const rotateX = -dy * 45; 
+            const rotateY = dx * 45;
             
             const label = hotspot.querySelector('.hotspot-label');
             const summary = hotspot.querySelector('.hotspot-summary');
@@ -90,4 +91,35 @@ document.querySelectorAll('.modal-content').forEach(modal => {
     modal.style.top = '50%';
     modal.style.transform = 'translate(-50%, -50%) scale(0.95)';
 });
+
+/* ============================================================
+   BUSINESS CARD INTERACTIVE 3D LOGIC
+   ============================================================ */
+document.addEventListener('mousemove', (e) => {
+    const card = document.getElementById('business-card');
+    const container = document.querySelector('.business-card-container');
+    
+    if (!card || !container || !container.closest('.active')) return;
+
+    const rect = container.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    
+    // Calculate rotation (max 15 degrees)
+    const rotateX = (centerY - y) / (rect.height / 2) * 15;
+    const rotateY = (x - centerX) / (rect.width / 2) * 15;
+    
+    card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(50px)`;
+    
+    // Add dynamic shadow based on tilt
+    const shadowX = -rotateY * 2;
+    const shadowY = rotateX * 2;
+    card.style.boxShadow = `${shadowX}px ${shadowY}px 50px rgba(0,0,0,0.5), 0 20px 40px rgba(0,0,0,0.4)`;
+});
+
+// Reset card on mouse leave (if we want it to return to flat)
+// However, since it's in a modal that captures mouse, we can just leave it or use the overlay click
 

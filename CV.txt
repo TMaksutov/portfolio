@@ -1,0 +1,89 @@
+ 	Timur Maksutov
+Technical Product Manager
+Summary
+With over 15 years of expertise in Software projects within Oil & Gas and MedTech industries, I am an experienced Tech leader, AI expert and Data Scientist with a proven track record of designing and integrating AI strategy and ML models for complex, enterprise-scale products.
+Contacts
+Zug, Switzerland
++41 79 578 9152
+maksutov.ch@gmail.com
+linkedin.com/in/timur-maksutov
+Residence Permit C	Education
+Master of Computer engineering (M.Sc.) with Honors | 2010
+Gubkin Russian State University of Oil and Gas, Moscow
+Faculty of Automation and Computer Engineering
+Field of Study: Automated Electromechanical Complexes and Systems
+Skills
+Project Management
+•	R&D, Agile, SAFe, QMS
+•	Risk Management
+•	Process Engineering
+•	Requirements, Traceability
+•	Polarion, Helix ALM, Azure DevOps
+ML and Data Science
+•	Anomaly Detection, Digital Twins
+•	Data Analysis, Python, VBA
+•	Power BI, Tableau, Cognos
+•	Classical ML, Deep Learning
+•	SQL databases, Data Pipelines
+•	Keras, Scikit, Pandas, Polars, Dask
+•	Microsoft Azure, CI/CD, MLflow
+Software Development
+•	Testing, Test Automation, ISTQB
+•	V-Model, Quality Assurance, SRS
+•	Connectivity, IoT, Digitalisation
+•	SCADA, PLC, ArcGis
+•	Physical modelling, simulations
+Languages
+•	English: C1
+•	German: B1
+•	Russian: Native
+Personal side projects:
+gas-flows.com
+data-forecast.com	Experience 
+Jul 2022 - Present 
+Belimed AG | Zug, Switzerland
+Project Manager & AI/Data Lead
+Led R&D project for medical device auxiliary equipment, overseeing software design, QA, regulatory compliance, and technical documentation to ensure standards adherence.
+Managed AI strategy and product innovation, integrating data-driven approaches into strategic decision-making and increasing business value.
+Designed on-premises data platform and ML models (deep learning, distributed computing) for predictive analytics, digital twins and anomaly detection, defining data architecture, enabling detection of up to 50% of issues and predicting up to 20%.
+Created advanced mathematical models and simulations for process engineering to optimize equipment performance.
+Supported development of IoT and connectivity product, gathering 1M files.
+Requirements & Test Engineer
+Defined requirements, test plans, and implemented System Engineering principles, integrating R&D QA strategies for embedded software and electrical systems in medical devices, within V-model principles.
+Administered Polarion, Helix ALM, and Azure DevOps to achieve 100% traceability and requirements test coverage, ensuring product quality and compliance with IEC 62304 and ISO 13485.
+Managed and deployed automated and regression testing protocols for software and systems to ensure continuous quality assurance, resulting in an 80% reduction in error rates
+Jan 2020 - Jun 2022
+Nord Stream 2 AG | Zug, Switzerland
+Gas Pipeline Transportation Engineer, Dispatching Department
+Led commissioning for pipeline start-up, packing, and ready-to-launch preparations, ensuring seamless transition to operations.
+Integrated tools (SCADA, hydraulic simulation, digital contracting, dispatch journals, ArcGIS-based ship monitoring) as Product Owner/Developer.
+Optimized pipeline operations by developing/executing gas volume nominations using advanced hydraulic calculation systems (PAS) and improving operating modes.
+Analyzed complex datasets using SQL, Excel VBA, CSV, Power BI, and SharePoint to deliver actionable insights and drive data-driven decisions.
+Oversaw maintenance and troubleshooting for mechanical, electrical, automation, and metrology systems, ensuring optimal system reliability.
+Conducted risk management frameworks, including identification, planning, tracking, and responsive action strategies, mitigating operational risks.
+Apr 2013 – Dec 2019
+Gazprom | Moscow, Russia
+Chief Technologist, Gas Dispatching Department 
+Oversaw and real time optimization of Gas Grid System operation modes, gas flow schemes
+Enhanced Automated Dispatch Control Systems to improve performance and monitoring
+Conducted data analyses to identify optimization opportunities and strategic decision-making
+Reviewed maintenance requests of maintenance operations and consolidating schedules
+Chief Specialist, Gas Dispatching Department
+Development of operational flow schemes and facilities modes, oversight over maintenance
+Engineering and data communication software development and integration
+ISO 9001 Internal auditor
+Sep 2010 – Feb 2013
+Laboratory of NPF Inkram | Moscow, Russia
+Automation System Engineer
+Equipment diagnostics, algorithms development, software engineering and maintenance of PLC gas detection and control systems
+Certifications
+•	Google Project Management Specialization
+•	ISTQB Software Testing Foundation
+•	Microsoft Certified Azure AI Fundamentals
+•	ISO 31000:2018 Enterprise Risk Management
+•	ISO 9001:2015 Quality Management System (QMS)
+•	IBM Data Analyst Specialization
+•	ISO 13485:2016 Quality Management Systems for Medical Devices
+•	Six Sigma Yellow Belt
+
+

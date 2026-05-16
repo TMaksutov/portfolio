@@ -18,11 +18,14 @@
         <!-- Parallax Wrapper -->
         <div class="pan-wrapper" id="pan-wrapper">
             <!-- Background Image -->
-            <img src="Main photo.png" alt="Office Room" class="room-bg" id="room-bg">
+            <img src="assets/images/Main photo.png" alt="Office Room" class="room-bg" id="room-bg">
+            <img src="assets/images/Main photo 2.png" alt="Office Room Alt" class="room-bg room-bg-alt" id="room-bg-alt">
+            <div class="focus-overlay" id="focus-overlay"></div>
             
             <!-- Hotspots -->
             <!-- 1. My Head (Summary) -->
             <div class="hotspot" id="spot-summary" style="top: 58%; left: 50%; width: 12%; height: 20%;" onclick="openModal('modal-summary')">
+                <div class="hotspot-pulse"></div>
                 <div class="hotspot-label">TIMUR MAKSUTOV</div>
                 <div class="hotspot-summary">Tech leader, AI expert and Data Scientist with over 15 years expertise in Software projects within Oil & Gas and MedTech industries.</div>
             </div>
@@ -127,6 +130,7 @@
             <span class="close-btn" onclick="closeModals()">&times;</span>
             <div class="business-card-container">
                 <div class="business-card" id="business-card">
+                    <canvas id="scratch-canvas" class="scratch-layer"></canvas>
                     <div class="card-front">
                         <div class="card-header">
                             <div class="card-titles">
@@ -221,12 +225,12 @@
             <div class="floating-pages-container" onclick="event.stopPropagation()">
                 <!-- Page 1 -->
                 <div class="cv-page page-left">
-                    <img src="cv1.jpg" alt="CV Page 1">
+                    <img src="assets/images/cv1.jpg" alt="CV Page 1">
                     <!-- Fallback if you prefer PDF: <iframe src="CV.pdf#page=1&toolbar=0" frameborder="0"></iframe> -->
                 </div>
                 <!-- Page 2 -->
                 <div class="cv-page page-right">
-                    <img src="cv2.jpg" alt="CV Page 2">
+                    <img src="assets/images/cv2.jpg" alt="CV Page 2">
                     <!-- Fallback if you prefer PDF: <iframe src="CV.pdf#page=2&toolbar=0" frameborder="0"></iframe> -->
                 </div>
             </div>
@@ -239,23 +243,18 @@
             <button class="close-cv-btn" onclick="closeModals()">Close Preview</button>
         </div>
 
-    </div>
-
         <!-- 6. Certifications Modal -->
-        <div class="modal-content glass" id="modal-certs" onclick="event.stopPropagation()">
-            <span class="close-btn" onclick="closeModals()">&times;</span>
-            <h2 class="section-title"><i data-lucide="award"></i> Professional Certifications</h2>
-            <div class="cert-grid">
-                <span>PRINCE2 Foundation</span>
-                <span>Google Project Management Professional</span>
-                <span>Six Sigma Yellow Belt</span>
-                <span>ISTQB Foundation</span>
-                <span>Azure AI Fundamentals</span>
-                <span>ISO 31000 Risk Management</span>
-                <span>ISO 13485 Internal Auditor</span>
-                <span>ISO 9001 QMS Auditor</span>
-                <span>IBM Data Analyst Professional</span>
+        <div class="modal-content cv-modal-spread" id="modal-certs">
+            
+            <div class="certs-container" onclick="event.stopPropagation()">
+                <div class="cert-page"><img src="assets/images/cert1.png" alt="Certificate 1"><div class="glanz-overlay"></div></div>
+                <div class="cert-page"><img src="assets/images/cert2.png" alt="Certificate 2"><div class="glanz-overlay"></div></div>
+                <div class="cert-page"><img src="assets/images/cert3.png" alt="Certificate 3"><div class="glanz-overlay"></div></div>
+                <div class="cert-page"><img src="assets/images/cert4.png" alt="Certificate 4"><div class="glanz-overlay"></div></div>
+                <div class="cert-page"><img src="assets/images/cert5.png" alt="Certificate 5"><div class="glanz-overlay"></div></div>
+                <div class="cert-page"><img src="assets/images/cert6.png" alt="Certificate 6"><div class="glanz-overlay"></div></div>
             </div>
+        </div>
 
         <!-- 7. Projects Modal -->
         <div class="modal-content glass" id="modal-projects" onclick="event.stopPropagation()">

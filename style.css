@@ -16,6 +16,8 @@ body { background: #000; color: var(--text-main); font-family: 'Inter', sans-ser
     width: 100vw;
     height: 100vh;
     overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .pan-wrapper {
@@ -29,11 +31,8 @@ body { background: #000; color: var(--text-main); font-family: 'Inter', sans-ser
 }
 
 /* Dim others when one is hovered */
-.pan-wrapper.has-hover .hotspot {
-    opacity: 0.2;
-}
-.pan-wrapper.has-hover .hotspot:hover {
-    opacity: 1;
+.pan-wrapper.has-hover .hotspot:not(:hover) {
+    opacity: 0;
 }
 
 .room-bg {
@@ -41,11 +40,53 @@ body { background: #000; color: var(--text-main); font-family: 'Inter', sans-ser
     height: 100%;
     object-fit: cover;
     pointer-events: none;
+    user-select: none;
+    -webkit-user-drag: none;
     transition: filter 0.5s ease;
 }
 
-.room-container.blurred .room-bg {
+.room-bg-alt {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transition: opacity 1s ease, filter 0.5s ease;
+}
+
+.room-container.alt-bg-active .room-bg-alt {
+    opacity: 1;
+}
+
+.room-container.blurred .room-bg,
+.room-container.blurred .room-bg-alt {
     filter: blur(8px) brightness(0.5);
+}
+
+.room-container.blurred .hotspot {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Gradient Blur Focus Effect */
+.focus-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    backdrop-filter: blur(8px) brightness(0.5);
+    -webkit-backdrop-filter: blur(8px) brightness(0.5);
+    /* Create a clear circle around the point, blurring everything else */
+    mask-image: radial-gradient(circle at 56% 55%, transparent 15%, black 50%);
+    -webkit-mask-image: radial-gradient(circle at 56% 55%, transparent 15%, black 50%);
+    opacity: 0;
+    transition: opacity 1s ease;
+    z-index: 1;
+}
+
+.room-container.gradient-blurred .focus-overlay {
+    opacity: 1;
 }
 
 /* HUD Instructions */
@@ -216,6 +257,8 @@ body { background: #000; color: var(--text-main); font-family: 'Inter', sans-ser
     opacity: 0;
     transform: scale(0.95);
     transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1), opacity 1s ease;
+    user-select: text;
+    -webkit-user-select: text;
 }
 
 .modal-content.wide {
@@ -251,6 +294,37 @@ body { background: #000; color: var(--text-main); font-family: 'Inter', sans-ser
 .summary-text { font-size: 1.1rem; line-height: 1.6; color: #cbd5e1; margin-bottom: 2rem; }
 .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 .contact-grid span { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: var(--text-muted); }
+
+/* Floating Text Mode (No background, 3D text) */
+.modal-content.floating-text-mode {
+    background: none !important;
+    backdrop-filter: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    perspective: 1000px;
+    width: 600px !important;
+    max-height: none !important;
+    overflow: visible !important;
+}
+.modal-content.floating-text-mode .section-title,
+.modal-content.floating-text-mode .summary-text,
+.modal-content.floating-text-mode .close-btn {
+    transform-style: preserve-3d;
+    transition: transform 0.1s ease-out;
+}
+.modal-content.floating-text-mode .section-title {
+    color: white;
+    text-shadow: 0 2px 10px rgba(0,0,0,1);
+    font-weight: 800;
+}
+.modal-content.floating-text-mode .summary-text {
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 0 1px 6px rgba(0,0,0,1);
+}
+.modal-content.floating-text-mode .close-btn {
+    color: white;
+    text-shadow: 0 2px 10px rgba(0,0,0,1);
+}
 
 /* Experience */
 .two-col { display: flex; gap: 2rem; }
@@ -360,20 +434,29 @@ body { background: #000; color: var(--text-main); font-family: 'Inter', sans-ser
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: 
-        url('https://www.transparenttextures.com/patterns/natural-paper.png'),
-        linear-gradient(45deg, rgba(0,0,0,0.02) 25%, transparent 25%, transparent 50%, rgba(0,0,0,0.02) 50%, rgba(0,0,0,0.02) 75%, transparent 75%, transparent);
-    background-size: auto, 4px 4px; /* Fiber grain size */
-    opacity: 0.4;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.12;
     pointer-events: none;
-    filter: contrast(105%) brightness(98%);
+    mix-blend-mode: multiply;
+    z-index: 0;
+}
+
+.scratch-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
 }
 
 .business-card {
     width: 100%;
     height: 100%;
-    background: #fdfdfd; /* Slightly off-white for paper */
+    background: #f4efeb; /* Warmer, more realistic paper color */
     color: #1a1a1a;
+    cursor: crosshair;
     border-radius: 2px;
     position: relative;
     transform-style: preserve-3d;
@@ -385,6 +468,8 @@ body { background: #000; color: var(--text-main); font-family: 'Inter', sans-ser
     display: flex;
     padding: 2.5rem;
     overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .card-front {
@@ -392,7 +477,8 @@ body { background: #000; color: var(--text-main); font-family: 'Inter', sans-ser
     display: flex;
     flex-direction: column;
     justify-content: center; /* Centered vertically but content stays left */
-    z-index: 1;
+    z-index: 2;
+    pointer-events: none; /* Let canvas capture mouse */
 }
 
 .card-header {
@@ -433,8 +519,6 @@ body { background: #000; color: var(--text-main); font-family: 'Inter', sans-ser
     display: flex;
     flex-direction: column;
     gap: 0.8rem;
-    border-left: 2px solid var(--primary-color);
-    padding-left: 1.5rem;
 }
 
 .contact-item {

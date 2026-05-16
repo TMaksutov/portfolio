@@ -40,6 +40,8 @@
     transition: transform 1s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 1s ease, opacity 1s ease;
     position: relative;
     z-index: 1;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .cv-page img {
@@ -52,6 +54,7 @@
     will-change: transform;
     backface-visibility: hidden;
     transform: translateZ(0); /* Force GPU High-Quality mode */
+    -webkit-user-drag: none;
 }
 
 /* 3D Spread Effect (Initial Position) */
@@ -66,8 +69,8 @@
 }
 
 /* Individual Page Zoom Class (Controlled by cv.js) */
-.cv-page.zoomed {
-    z-index: 100;
+.cv-page.zoomed, .cert-page.zoomed {
+    z-index: 100 !important;
     box-shadow: 0 50px 100px rgba(0,0,0,0.9);
     cursor: crosshair;
 }
@@ -144,4 +147,129 @@
 /* Hide default close button for CV spread */
 .cv-modal-spread .close-btn {
     display: none;
+}
+
+/* Certificates Spread */
+/* Certificates Spread */
+.certs-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    perspective: 2000px;
+    width: 90%;
+    max-width: 1300px;
+    justify-items: center;
+    align-items: center;
+    gap: 3rem;
+    padding: 2rem;
+    transform: translateY(-2vh); /* Slightly adjusted for new layout */
+}
+
+.cert-page {
+    height: 260px; 
+    background: #1a0f0a; /* Dark wood base */
+    padding: 12px; /* Space for the wood frame */
+    border-radius: 2px;
+    overflow: hidden; 
+    transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.6s ease, z-index 0s;
+    position: relative;
+    z-index: 1;
+    cursor: crosshair;
+    user-select: none;
+    -webkit-user-select: none;
+    box-shadow: 
+        0 30px 60px rgba(0,0,0,0.9),
+        0 0 20px rgba(0,0,0,0.4);
+}
+
+/* The Wood Frame */
+.cert-page::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    border: 8px solid #2d1b0d; /* Thinner border */
+    border-top-color: #3d2b1d;
+    border-bottom-color: #1a0f0a;
+    border-left-color: #26170a;
+    border-right-color: #26170a;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+    opacity: 0.15;
+    mix-blend-mode: overlay;
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* Inner Gold/Light line of the frame */
+.cert-page::after {
+    content: "";
+    position: absolute;
+    top: 7px; left: 7px; right: 7px; bottom: 7px; /* Adjusted for thinner frame */
+    border: 1px solid rgba(255, 215, 0, 0.15); /* Very subtle gold line */
+    box-shadow: inset 0 0 8px rgba(0,0,0,0.8); /* Depth shadow */
+    z-index: 3;
+    pointer-events: none;
+}
+
+.cert-page img {
+    height: 100%;
+    width: auto;
+    display: block;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    pointer-events: none;
+    -webkit-user-drag: none;
+    border: 1px solid rgba(0,0,0,0.8);
+    position: relative;
+    z-index: 1;
+}
+
+/* Glass & Glanz Layer */
+.glanz-overlay {
+    position: absolute;
+    top: 8px; left: 8px; right: 8px; bottom: 8px; /* Adjusted for thinner frame */
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 50%);
+    z-index: 4;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.glanz-overlay::after {
+    content: "";
+    position: absolute;
+    top: -100%;
+    left: calc(var(--glanz-x, 50%) - 150%); /* Follows mouse X */
+    width: 300%;
+    height: 300%;
+    background: linear-gradient(
+        115deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0) 40%,
+        rgba(255, 255, 255, 0.25) 50%,
+        rgba(255, 255, 255, 0.6) 52%,
+        rgba(255, 255, 255, 0.25) 54%,
+        rgba(255, 255, 255, 0) 60%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    transform: rotate(10deg);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.cert-page:hover .glanz-overlay::after {
+    opacity: 1;
+}
+
+/* Row 1 */
+.cert-page:nth-child(1) { transform: rotateY(15deg) rotateX(10deg) translateZ(20px); z-index: 2; }
+.cert-page:nth-child(2) { transform: rotateY(0deg) rotateX(10deg) translateZ(40px); z-index: 3; }
+.cert-page:nth-child(3) { transform: rotateY(-15deg) rotateX(10deg) translateZ(20px); z-index: 2; }
+
+/* Row 2 */
+.cert-page:nth-child(4) { transform: rotateY(15deg) rotateX(-10deg) translateZ(20px); z-index: 2; }
+.cert-page:nth-child(5) { transform: rotateY(0deg) rotateX(-10deg) translateZ(40px); z-index: 3; }
+.cert-page:nth-child(6) { transform: rotateY(-15deg) rotateX(-10deg) translateZ(20px); z-index: 2; }
+
+.certs-container:has(.cert-page:hover) .cert-page:not(:hover) {
+    transform: rotateY(20deg) translateZ(-100px);
 }

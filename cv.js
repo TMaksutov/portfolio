@@ -6,64 +6,67 @@ document.addEventListener('DOMContentLoaded', () => {
     const cvPages = document.querySelectorAll('.cv-page, .cert-page');
     
     cvPages.forEach(page => {
-        // Create canvas for red pen drawing
-        const canvas = document.createElement('canvas');
-        canvas.classList.add('pen-canvas');
-        canvas.style.position = 'absolute';
-        canvas.style.top = '0';
-        canvas.style.left = '0';
-        canvas.style.width = '100%';
-        canvas.style.height = '100%';
-        canvas.style.zIndex = '10';
-        canvas.style.pointerEvents = 'none'; // let page capture mouse
-        canvas.style.opacity = '0.5'; // Use canvas opacity to prevent dark joints
-        page.appendChild(canvas);
-        
-        // Make images ignore pointer events
-        const img = page.querySelector('img');
-        if (img) img.style.pointerEvents = 'none';
-        
+        const isCert = page.classList.contains('cert-page');
         let ctx = null;
         let isDrawing = false;
         let pts = [];
-        
-        function initCanvas() {
-            if (!ctx && page.offsetWidth > 0) {
-                canvas.width = page.offsetWidth;
-                canvas.height = page.offsetHeight;
-                ctx = canvas.getContext('2d');
+        let canvas = null;
+
+        if (!isCert) {
+            // Create canvas for red pen drawing
+            canvas = document.createElement('canvas');
+            canvas.classList.add('pen-canvas');
+            canvas.style.position = 'absolute';
+            canvas.style.top = '0';
+            canvas.style.left = '0';
+            canvas.style.width = '100%';
+            canvas.style.height = '100%';
+            canvas.style.zIndex = '10';
+            canvas.style.pointerEvents = 'none'; // let page capture mouse
+            canvas.style.opacity = '0.5'; // Use canvas opacity to prevent dark joints
+            page.appendChild(canvas);
+            
+            // Make images ignore pointer events
+            const img = page.querySelector('img');
+            if (img) img.style.pointerEvents = 'none';
+            
+            function initCanvas() {
+                if (!ctx && page.offsetWidth > 0) {
+                    canvas.width = page.offsetWidth;
+                    canvas.height = page.offsetHeight;
+                    ctx = canvas.getContext('2d');
+                }
             }
+            
+            page.addEventListener('mouseenter', initCanvas);
+            
+            page.addEventListener('mousedown', (e) => {
+                initCanvas();
+                isDrawing = true;
+                pts = [{x: e.offsetX, y: e.offsetY}];
+            });
+            
+            window.addEventListener('mouseup', () => {
+                if (isDrawing && pts.length >= 2 && ctx) {
+                    const p1 = pts[pts.length - 2];
+                    const p2 = pts[pts.length - 1];
+                    const midX = (p1.x + p2.x) / 2;
+                    const midY = (p1.y + p2.y) / 2;
+                    ctx.beginPath();
+                    ctx.moveTo(midX, midY);
+                    ctx.lineTo(p2.x, p2.y);
+                    ctx.strokeStyle = '#dc143c';
+                    ctx.lineWidth = 1.5;
+                    ctx.lineCap = 'round';
+                    ctx.lineJoin = 'round';
+                    ctx.stroke();
+                }
+                isDrawing = false;
+                pts = [];
+            });
         }
         
-        page.addEventListener('mouseenter', initCanvas);
-        
-        page.addEventListener('mousedown', (e) => {
-            initCanvas();
-            isDrawing = true;
-            pts = [{x: e.offsetX, y: e.offsetY}];
-        });
-        
-        window.addEventListener('mouseup', () => {
-            if (isDrawing && pts.length >= 2 && ctx) {
-                const p1 = pts[pts.length - 2];
-                const p2 = pts[pts.length - 1];
-                const midX = (p1.x + p2.x) / 2;
-                const midY = (p1.y + p2.y) / 2;
-                ctx.beginPath();
-                ctx.moveTo(midX, midY);
-                ctx.lineTo(p2.x, p2.y);
-                ctx.strokeStyle = '#dc143c';
-                ctx.lineWidth = 1.5;
-                ctx.lineCap = 'round';
-                ctx.lineJoin = 'round';
-                ctx.stroke();
-            }
-            isDrawing = false;
-            pts = [];
-        });
-        
         // Store original transform to reset properly
-        const originalTransform = getComputedStyle(page).transform;
         let leaveTimeout = null;
         
         page.addEventListener('mousemove', (e) => {
@@ -71,7 +74,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 clearTimeout(leaveTimeout);
                 leaveTimeout = null;
             }
-            if (isDrawing && ctx) {
+
+            if (!isCert && isDrawing && ctx) {
                 pts.push({x: e.offsetX, y: e.offsetY});
                 
                 ctx.strokeStyle = '#dc143c'; // Crimson red pen (solid, transparency comes from canvas)
@@ -109,24 +113,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const x = (e.clientX - rect.left) / rect.width; // 0 to 1
             const y = (e.clientY - rect.top) / rect.height; // 0 to 1
 
-            // 1. Determine centering shift dynamically
-            // Distance from element's center to screen center
-            const screenCenterX = window.innerWidth / 2;
-            const screenCenterY = window.innerHeight / 2;
-            const pageCenterX = rect.left + rect.width / 2;
-            const pageCenterY = rect.top + rect.height / 2;
-            
-            // Note: we don't need full center shift if we just want it to pop out,
-            // but we'll apply a shift towards center to ensure it's visible.
-            // When zoomed, it should be centered.
-            // Since transform origin is center, translation is just screenCenter - pageCenter.
-            // But we must be careful since rect is updated during animation.
-            // Actually, rect is affected by the current transform! 
-            // So calculating center shift continuously based on rect will cause jitter.
-            
-            // To avoid jitter, we just use a fixed pop-out and scale, with pan.
-            // For the CV pages, we keep the hardcoded shift for backward compatibility if needed,
-            // or just use a generic pop out. Let's use a generic pop out.
             let centerShiftX = 0;
             let centerShiftY = 0;
             
@@ -141,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const panY = (0.5 - y) * 350; 
 
             // 3. Apply combined transform
-            if (page.classList.contains('cert-page')) {
+            if (isCert) {
                 page.style.transform = `translate(${panX}px, ${panY}px) scale(1.8) rotateY(0deg) translateZ(250px)`;
                 
                 // Update glanz position based on mouse X

@@ -273,3 +273,8 @@
 .certs-container:has(.cert-page:hover) .cert-page:not(:hover) {
     transform: rotateY(20deg) translateZ(-100px);
 }
+
+.cert-page.slipping, .cert-page.falling {
+    pointer-events: none !important;
+    z-index: 10 !important;
+}

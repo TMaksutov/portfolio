@@ -70,6 +70,13 @@ document.addEventListener('DOMContentLoaded', () => {
         let leaveTimeout = null;
         
         page.addEventListener('mousemove', (e) => {
+            if (page.classList.contains('falling') || page.classList.contains('slipping')) return;
+
+            if (page.fallTimeout) {
+                clearTimeout(page.fallTimeout);
+                page.fallTimeout = null;
+            }
+
             if (leaveTimeout) {
                 clearTimeout(leaveTimeout);
                 leaveTimeout = null;
@@ -140,11 +147,51 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         page.addEventListener('mouseleave', () => {
+            if (page.classList.contains('falling') || page.classList.contains('slipping')) return;
+
             leaveTimeout = setTimeout(() => {
                 page.classList.remove('zoomed');
                 // Reset to original 3D spread position defined in css
                 page.style.transform = '';
                 leaveTimeout = null;
+
+                // 20% chance that the certificate falls down
+                if (isCert) {
+                    if (Math.random() < 0.2) {
+                        page.fallTimeout = setTimeout(() => {
+                            if (!page.classList.contains('zoomed')) {
+                                const siblings = Array.from(page.parentNode.children);
+                                const index = siblings.indexOf(page) + 1;
+                                const baseTransforms = {
+                                    1: 'rotateY(15deg) rotateX(10deg) translateZ(20px)',
+                                    2: 'rotateY(0deg) rotateX(10deg) translateZ(40px)',
+                                    3: 'rotateY(-15deg) rotateX(10deg) translateZ(20px)',
+                                    4: 'rotateY(15deg) rotateX(-10deg) translateZ(20px)',
+                                    5: 'rotateY(0deg) rotateX(-10deg) translateZ(40px)',
+                                    6: 'rotateY(-15deg) rotateX(-10deg) translateZ(20px)'
+                                };
+                                const base = baseTransforms[index] || '';
+                                const rotation = Math.random() < 0.5 ? 10 : -10;
+
+                                // Step 1: Rotate in random direction by 10 degrees (grad)
+                                page.classList.add('slipping');
+                                page.style.transition = 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                                page.style.transform = `translateY(0px) ${base} rotate(${rotation}deg)`;
+
+                                // Step 2: Fall down straight without further rotation after 400ms
+                                page.fallTimeout = setTimeout(() => {
+                                    if (page.classList.contains('slipping')) {
+                                        page.classList.remove('slipping');
+                                        page.classList.add('falling');
+                                        page.style.transition = 'transform 0.55s cubic-bezier(0.32, 0, 0.67, 0)';
+                                        page.style.transform = `translateY(1200px) ${base} rotate(${rotation}deg)`;
+                                        page.fallTimeout = null;
+                                    }
+                                }, 400);
+                            }
+                        }, 600); // 600ms wait for the settle transition to complete
+                    }
+                }
             }, 150); // 150ms buffer to prevent flickering
         });
     });

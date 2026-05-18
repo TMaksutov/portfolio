@@ -111,7 +111,7 @@
             </div>
 
             <!-- 10. Window (Location & Permit) -->
-            <div class="hotspot" id="spot-permit" style="top: 10%; left: 75%; width: 10%; height: 50%; cursor: default;">
+            <div class="hotspot" id="spot-permit" style="top: 10%; left: 75%; width: 10%; height: 50%; cursor: pointer;" onclick="openWindowView()">
 
                 <div class="hotspot-label">Location</div>
                 <div class="hotspot-summary">
@@ -119,6 +119,34 @@
                     Residence: Permit C
                 </div>
             </div>
+        </div>
+
+        <!-- Window View Container -->
+        <div class="window-view" id="window-view">
+            <!-- Background Image -->
+            <div class="window-bg-wrapper" id="window-bg-wrapper">
+                <img src="assets/images/window.png" alt="Window View" class="window-bg-img window-bg-sharp">
+                <img src="assets/images/window.png" alt="Window View" class="window-bg-img window-bg-blurred">
+                <div id="wipe-interaction-layer" class="wipe-interaction-layer"></div>
+            </div>
+            
+            <!-- Window Frame -->
+            <div class="window-frame-wrapper" id="window-frame-wrapper">
+                <div class="window-frame">
+                    <img src="assets/images/frame.png" alt="Window Frame" class="frame-image">
+                    <!-- Floating Info Overlay (Center-Right, locked to the frame) -->
+                    <div class="window-info-overlay">
+                        <h1 class="window-info-title">Location</h1>
+                        <p class="window-info-text">
+                            6300 Zug Switzerland<br>
+                            Residence: Permit C
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Close Button -->
+            <button class="window-close-btn" onclick="closeWindowView()">&times;</button>
         </div>
     </div>
 

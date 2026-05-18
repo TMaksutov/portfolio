@@ -10,6 +10,45 @@ const windowFrameWrapper = document.getElementById('window-frame-wrapper');
 const windowBgBlurred = document.querySelector('.window-bg-blurred');
 const wipeLayer = document.getElementById('wipe-interaction-layer');
 
+// Preload logic for window location images
+let locationImagesLoaded = false;
+let isPreloadingLocation = false;
+const locationImages = [
+    'assets/images/window.png',
+    'assets/images/frame.png'
+];
+
+function preloadLocationImages(callback) {
+    if (locationImagesLoaded) {
+        if (callback) callback();
+        return;
+    }
+    if (isPreloadingLocation) {
+        if (callback) {
+            window.addEventListener('locationImagesLoaded', callback, { once: true });
+        }
+        return;
+    }
+    isPreloadingLocation = true;
+    
+    let loadedCount = 0;
+    const total = locationImages.length;
+    
+    locationImages.forEach(src => {
+        const img = new Image();
+        img.onload = img.onerror = () => {
+            loadedCount++;
+            if (loadedCount === total) {
+                locationImagesLoaded = true;
+                isPreloadingLocation = false;
+                window.dispatchEvent(new Event('locationImagesLoaded'));
+                if (callback) callback();
+            }
+        };
+        img.src = src;
+    });
+}
+
 // High-performance offscreen Mask Canvas (low resolution for soft upscaled boundaries and instant dataURL generation)
 const maskCanvas = document.createElement('canvas');
 const maskCtx = maskCanvas.getContext('2d');
@@ -91,7 +130,7 @@ function startCondensation() {
     }, tickRate);
 }
 
-function openWindowView() {
+function revealWindowView() {
     if (windowView) {
         windowView.classList.add('active');
         initMask();
@@ -103,6 +142,27 @@ function openWindowView() {
                 startCondensation();
             }
         }, 1000);
+    }
+}
+
+function openWindowView() {
+    if (!windowView) return;
+    
+    if (locationImagesLoaded) {
+        revealWindowView();
+    } else {
+        const loader = document.getElementById('location-loader');
+        if (loader) {
+            loader.classList.add('active');
+        }
+        preloadLocationImages(() => {
+            if (loader) {
+                loader.classList.remove('active');
+            }
+            setTimeout(() => {
+                revealWindowView();
+            }, 300);
+        });
     }
 }
 
@@ -313,6 +373,8 @@ document.addEventListener('mousemove', (e) => {
 window.addEventListener('load', () => {
     const img = new Image();
     img.src = 'assets/images/Main photo 2.png';
+    // Preload location images as well!
+    preloadLocationImages();
 });
 
 // Modal Logic

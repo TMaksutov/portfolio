@@ -151,17 +151,9 @@ function openWindowView() {
     if (locationImagesLoaded) {
         revealWindowView();
     } else {
-        const loader = document.getElementById('location-loader');
-        if (loader) {
-            loader.classList.add('active');
-        }
+        // Just preload the images and show nothing in the meantime (do nothing/pause)
         preloadLocationImages(() => {
-            if (loader) {
-                loader.classList.remove('active');
-            }
-            setTimeout(() => {
-                revealWindowView();
-            }, 300);
+            revealWindowView();
         });
     }
 }

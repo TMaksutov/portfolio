@@ -370,6 +370,7 @@ body { background: #000; color: var(--text-main); font-family: 'Inter', sans-ser
     display: none;
     align-items: center;
     justify-content: center;
+    cursor: none;
 }
 
 .business-card-modal.active {
@@ -383,7 +384,7 @@ body { background: #000; color: var(--text-main); font-family: 'Inter', sans-ser
     right: 2rem;
     font-size: 2.5rem;
     color: white;
-    cursor: pointer;
+    cursor: none;
     z-index: 1000;
     transition: var(--transition);
 }
@@ -429,7 +430,7 @@ body { background: #000; color: var(--text-main); font-family: 'Inter', sans-ser
     height: 100%;
     background: #f4efeb; /* Warmer, more realistic paper color */
     color: #1a1a1a;
-    cursor: crosshair;
+    cursor: none;
     border-radius: 2px;
     position: relative;
     transform-style: preserve-3d;
@@ -700,4 +701,10 @@ body { background: #000; color: var(--text-main); font-family: 'Inter', sans-ser
     text-shadow: 0 1px 6px rgba(0,0,0,1);
     line-height: 1.6;
     margin: 0;
+}
+
+/* Custom Cursor Hiding when Contacts Modal is Active */
+body.contacts-active,
+body.contacts-active * {
+    cursor: none !important;
 }

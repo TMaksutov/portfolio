@@ -1,17 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Timur Maksutov | Interactive Portfolio</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="cv.css">
+    <link rel="stylesheet" href="style.css?v=2">
+    <link rel="stylesheet" href="cv.css?v=2">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
+
 <body class="no-scroll">
+
+    <!-- Custom Cursor -->
+    <img id="custom-pointer" src="" style="position: fixed; pointer-events: none; z-index: 10000; display: none; width: 64px; height: auto; transform: translate(0, 0);">
 
     <!-- The Interactive Room Container -->
     <div class="room-container">
@@ -19,19 +24,22 @@
         <div class="pan-wrapper" id="pan-wrapper">
             <!-- Background Image -->
             <img src="assets/images/Main photo.png" alt="Office Room" class="room-bg" id="room-bg">
-            <img src="assets/images/Main photo 2.png" alt="Office Room Alt" class="room-bg room-bg-alt" id="room-bg-alt">
+            <img src="assets/images/Main photo 2.png" alt="Office Room Alt" class="room-bg room-bg-alt"
+                id="room-bg-alt">
             <div class="focus-overlay" id="focus-overlay"></div>
-            
+
             <!-- Hotspots -->
             <!-- 1. My Head (Summary) -->
-            <div class="hotspot" id="spot-summary" style="top: 58%; left: 50%; width: 12%; height: 20%;" onclick="openModal('modal-summary')">
+            <div class="hotspot" id="spot-summary" style="top: 58%; left: 50%; width: 12%; height: 20%;"
+                onclick="openModal('modal-summary')">
 
                 <div class="hotspot-label">TIMUR MAKSUTOV</div>
-                <div class="hotspot-summary">Tech leader, AI expert and Data Scientist with over 15 years expertise in Software projects within Oil & Gas and MedTech industries.</div>
+                <div class="hotspot-summary">Project manager, Product owner, Team leader with over 15 years expertise in engineering, digital transformation, software development, and AI solutions within Oil & Gas and MedTech industries.</div>
             </div>
 
             <!-- 2. Toys on Shelves (Career Path) -->
-            <div class="hotspot" id="spot-experience" style="top: 3%; left: 10%; width: 35%; height: 20%;" onclick="openModal('modal-experience')">
+            <div class="hotspot" id="spot-experience" style="top: 3%; left: 10%; width: 35%; height: 20%;"
+                onclick="openModal('modal-experience')">
                 <div class="hotspot-label">Career Journey</div>
                 <div class="hotspot-summary">
                     AI/Data Lead | Belimed AG (2022–Present)<br>
@@ -44,7 +52,8 @@
             </div>
 
             <!-- 3. Books on Shelves (Skills) -->
-            <div class="hotspot" id="spot-stack" style="top: 25%; left: 5%; width: 35%; height: 15%;" onclick="openModal('modal-stack')">
+            <div class="hotspot" id="spot-stack" style="top: 25%; left: 5%; width: 35%; height: 15%;"
+                onclick="openModal('modal-stack')">
                 <div class="hotspot-label">Skills & Expertise</div>
                 <div class="hotspot-summary">
                     <b>Strategic Leadership</b><br>R&D Management, AI Strategy, Digital Transformation<br><br>
@@ -54,7 +63,8 @@
             </div>
 
             <!-- 4. Business Cards (Full Contacts) -->
-            <div class="hotspot" id="spot-contacts" style="top: 78%; left: 10%; width: 15%; height: 18%;" onclick="openModal('modal-contacts')">
+            <div class="hotspot" id="spot-contacts" style="top: 78%; left: 10%; width: 15%; height: 18%;"
+                onclick="openModal('modal-contacts')">
                 <div class="hotspot-label">Contacts</div>
                 <div class="hotspot-summary">
                     <b>Project Manager | AI / ML Lead</b><br>
@@ -66,7 +76,8 @@
             </div>
 
             <!-- 5. A4 Paper (CV) -->
-            <div class="hotspot" id="spot-cv" style="top: 73%; left: 26%; width: 18%; height: 15%;" onclick="openModal('modal-cv')">
+            <div class="hotspot" id="spot-cv" style="top: 73%; left: 26%; width: 18%; height: 15%;"
+                onclick="openModal('modal-cv')">
                 <div class="hotspot-label">CV</div>
                 <div class="hotspot-summary">Professional Experience & Skills<br>Click to view PDF</div>
             </div>
@@ -83,19 +94,39 @@
             </div>
 
             <!-- 7. Monitors (Side Projects) -->
-            <div class="hotspot" id="spot-projects" style="top: 40%; left: 22%; width: 15%; height: 15%;" onclick="openModal('modal-projects')">
+            <div class="hotspot" id="spot-projects" style="top: 40%; left: 22%; width: 15%; height: 15%;"
+                onclick="openModal('modal-projects')">
                 <div class="hotspot-label">Side Projects</div>
                 <div class="hotspot-summary">gas-flows.com<br>data-forecast.com</div>
             </div>
 
             <!-- 8. Drawing Rolls (Industrial Projects) -->
-            <div class="hotspot" id="spot-engineering" style="top: 55%; left: 70%; width: 20%; height: 25%;" onclick="openModal('modal-experience')">
+            <div class="hotspot" id="spot-engineering" style="top: 60%; left: 70%; width: 20%; height: 25%; cursor: default;">
                 <div class="hotspot-label">Portfolio</div>
-                <div class="hotspot-summary">Computer Vision<br>MedTech Equipment<br>Gas Flow Diagrams</div>
+                <div class="hotspot-summary"
+                    style="font-size: 0.85rem; line-height: 1.4; text-align: center; white-space: nowrap;">
+                    2026<br>
+                    Computer vision for surgical instruments<br>
+                    ML predictive maintenance system and digital twins<br>
+                    Local vLLM Server<br>
+                    2025<br>
+                    Digital twins for medical washers<br>
+                    Transport system for hospital sterilizer<br>
+                    2024<br>
+                    IoT and data platform for medical equipment<br>
+                    2023<br>
+                    Medical Washer-disinfector<br>
+                    2022<br>
+                    Gas flow app<br>
+                    2021<br>
+                    Vessel monitoring system<br>
+                    ...
+                </div>
             </div>
 
             <!-- 9. Wall (Certifications) -->
-            <div class="hotspot" id="spot-certs" style="top: 5%; left: 48%; width: 15%; height: 35%;" onclick="openModal('modal-certs')">
+            <div class="hotspot" id="spot-certs" style="top: 5%; left: 48%; width: 15%; height: 35%;"
+                onclick="openModal('modal-certs')">
                 <div class="hotspot-label">Certifications</div>
                 <div class="hotspot-summary">
                     PRINCE2 Foundation<br>
@@ -111,7 +142,8 @@
             </div>
 
             <!-- 10. Window (Location & Permit) -->
-            <div class="hotspot" id="spot-permit" style="top: 10%; left: 75%; width: 10%; height: 50%; cursor: pointer;" onclick="openWindowView()">
+            <div class="hotspot" id="spot-permit" style="top: 10%; left: 75%; width: 10%; height: 50%; cursor: pointer;"
+                onclick="openWindowView()">
 
                 <div class="hotspot-label">Location</div>
                 <div class="hotspot-summary">
@@ -129,7 +161,7 @@
                 <img src="assets/images/window.png" alt="Window View" class="window-bg-img window-bg-blurred">
                 <div id="wipe-interaction-layer" class="wipe-interaction-layer"></div>
             </div>
-            
+
             <!-- Window Frame -->
             <div class="window-frame-wrapper" id="window-frame-wrapper">
                 <div class="window-frame">
@@ -152,7 +184,7 @@
 
     <!-- Modals Overlay System -->
     <div class="modal-overlay" id="global-overlay" onclick="closeModals()">
-        
+
         <!-- 1. Contacts Modal (Business Card) -->
         <div class="modal-content business-card-modal" id="modal-contacts" onclick="event.stopPropagation()">
             <span class="close-btn" onclick="closeModals()">&times;</span>
@@ -167,7 +199,7 @@
                                 <p class="card-domains">Oil&Gas | MedTech</p>
                             </div>
                         </div>
-                        
+
                         <div class="card-body">
                             <div class="contact-item">
                                 <i data-lucide="mail"></i>
@@ -191,9 +223,12 @@
         <div class="modal-content glass" id="modal-summary" onclick="event.stopPropagation()">
             <span class="close-btn" onclick="closeModals()">&times;</span>
             <h2 class="section-title"><i data-lucide="info"></i> Professional Profile & Summary</h2>
-            <p class="summary-text" style="margin-bottom: 1rem;"><b>Overview:</b> Engineer with over 15 years of experience in data and software engineering, specializing in developing innovative solutions for the Oil & Gas and Medical Device industries. Holds a Master of Science in Computer Engineering, blending advanced analytics with practical software solutions.</p>
-            <p class="summary-text" style="margin-bottom: 1rem;"><b>Core Focus:</b> Project Management, Machine Learning, Data Science, R&D, and MedTech.</p>
-            <p class="summary-text"><b>Key Value Proposition:</b> Delivers high-quality results through data-driven strategies. Bridges the gap between physical engineering (offshore pipelines, medical devices) and digital intelligence (AI, ML, Data Architecture).</p>
+            <p class="summary-text" style="margin-bottom: 1rem;">Engineering and digitalization leader with 15 years of experience bridging the gap between traditional industrial engineering and advanced technology. Most recently, I successfully delivered a portfolio of complex technical projects while managing a cross-functional team. Currently, I serve as an AI/Data Lead, where I architect and drive internal machine learning and innovation initiatives. I specialize in turning ambitious R&D concepts into tangible business value and am highly driven to lead enterprise-level digitalization.</p>
+            <ul style="margin-left: 1.5rem; margin-bottom: 1rem; color: #cbd5e1; font-size: 1.1rem; line-height: 1.6;">
+                <li style="margin-bottom: 0.5rem;"><b>Technical Domains:</b> Digital Transformation, IoT, AI/Machine Learning, Predictive Maintenance, and Automation.</li>
+                <li style="margin-bottom: 0.5rem;"><b>Industry Focus:</b> Oil & Gas, Energy, MedTech, and IT Products for Engineering.</li>
+                <li style="margin-bottom: 0.5rem;"><b>Leadership:</b> Project Management, Product Ownership, and Data/AI Strategy.</li>
+            </ul>
         </div>
 
         <!-- 3. Tech Stack Modal -->
@@ -240,16 +275,24 @@
         <div class="modal-content glass" id="modal-experience" onclick="event.stopPropagation()">
             <span class="close-btn" onclick="closeModals()">&times;</span>
             <h2 class="section-title"><i data-lucide="briefcase"></i> Professional Experience</h2>
-            <div class="job"><b>Belimed AG</b> <small>(Jul 2022 - Present)</small><br><b>AI/Data Lead</b> | <b>Project Manager</b> | <b>Requirements & Test Engineer</b><br>Led R&D for medical devices, designing ML platforms. Managed AI strategy and implemented System Engineering principles.</div>
-            <div class="job"><b>Nord Stream 2 AG</b> <small>(Jan 2020 - Jun 2022)</small><br><b>Gas Engineer</b><br>Led commissioning for pipeline start-up. Product Owner/Developer for SCADA and hydraulic simulation tools.</div>
-            <div class="job"><b>Gazprom</b> <small>(Apr 2013 - Dec 2019)</small><br><b>Chief Technologist</b><br>Optimized Natural Gas Transmission Network, enhanced dispatch control systems, and developed operational flow schemes.</div>
-            <div class="job"><b>Laboratory of NPF Inkram</b> <small>(Sep 2010 - Feb 2013)</small><br><b>Automation System Engineer</b><br>Equipment diagnostics, algorithms development, software engineering and maintenance of PLC gas detection and control systems.</div>
+            <div class="job"><b>Belimed AG</b> <small>(Jul 2022 - Present)</small><br><b>AI/Data Lead</b> | <b>Project
+                    Manager</b> | <b>Requirements & Test Engineer</b><br>Led R&D for medical devices, designing ML
+                platforms. Managed AI strategy and implemented System Engineering principles.</div>
+            <div class="job"><b>Nord Stream 2 AG</b> <small>(Jan 2020 - Jun 2022)</small><br><b>Gas Engineer</b><br>Led
+                commissioning for pipeline start-up. Product Owner/Developer for SCADA and hydraulic simulation tools.
+            </div>
+            <div class="job"><b>Gazprom</b> <small>(Apr 2013 - Dec 2019)</small><br><b>Chief
+                    Technologist</b><br>Optimized Natural Gas Transmission Network, enhanced dispatch control systems,
+                and developed operational flow schemes.</div>
+            <div class="job"><b>Laboratory of NPF Inkram</b> <small>(Sep 2010 - Feb 2013)</small><br><b>Automation
+                    System Engineer</b><br>Equipment diagnostics, algorithms development, software engineering and
+                maintenance of PLC gas detection and control systems.</div>
         </div>
 
         <!-- 5. CV Modal (Floating Pages) -->
         <div class="modal-content cv-modal-spread" id="modal-cv">
             <span class="close-btn" onclick="closeModals()">&times;</span>
-            
+
             <div class="floating-pages-container" onclick="event.stopPropagation()">
                 <!-- Page 1 -->
                 <div class="cv-page page-left">
@@ -273,14 +316,26 @@
 
         <!-- 6. Certifications Modal -->
         <div class="modal-content cv-modal-spread" id="modal-certs">
-            
+
             <div class="certs-container" onclick="event.stopPropagation()">
-                <div class="cert-page"><img src="assets/images/cert1.png" alt="Certificate 1"><div class="glanz-overlay"></div></div>
-                <div class="cert-page"><img src="assets/images/cert2.png" alt="Certificate 2"><div class="glanz-overlay"></div></div>
-                <div class="cert-page"><img src="assets/images/cert3.png" alt="Certificate 3"><div class="glanz-overlay"></div></div>
-                <div class="cert-page"><img src="assets/images/cert4.png" alt="Certificate 4"><div class="glanz-overlay"></div></div>
-                <div class="cert-page"><img src="assets/images/cert5.png" alt="Certificate 5"><div class="glanz-overlay"></div></div>
-                <div class="cert-page"><img src="assets/images/cert6.png" alt="Certificate 6"><div class="glanz-overlay"></div></div>
+                <div class="cert-page"><img src="assets/images/cert1.png" alt="Certificate 1">
+                    <div class="glanz-overlay"></div>
+                </div>
+                <div class="cert-page"><img src="assets/images/cert2.png" alt="Certificate 2">
+                    <div class="glanz-overlay"></div>
+                </div>
+                <div class="cert-page"><img src="assets/images/cert3.png" alt="Certificate 3">
+                    <div class="glanz-overlay"></div>
+                </div>
+                <div class="cert-page"><img src="assets/images/cert4.png" alt="Certificate 4">
+                    <div class="glanz-overlay"></div>
+                </div>
+                <div class="cert-page"><img src="assets/images/cert5.png" alt="Certificate 5">
+                    <div class="glanz-overlay"></div>
+                </div>
+                <div class="cert-page"><img src="assets/images/cert6.png" alt="Certificate 6">
+                    <div class="glanz-overlay"></div>
+                </div>
             </div>
         </div>
 
@@ -291,19 +346,22 @@
             <div class="project-list">
                 <div class="project-item">
                     <h3>gas-flows.com</h3>
-                    <p>Specialized simulator for gas dynamics and flow analysis in transmission networks. Built with Python for fluid dynamics calculations.</p>
+                    <p>Specialized simulator for gas dynamics and flow analysis in transmission networks. Built with
+                        Python for fluid dynamics calculations.</p>
                 </div>
                 <div class="project-item">
                     <h3>data-forecast.com</h3>
-                    <p>Predictive analytics application for industrial data forecasting and anomaly detection. Utilizing deep learning and forecasting models.</p>
+                    <p>Predictive analytics application for industrial data forecasting and anomaly detection. Utilizing
+                        deep learning and forecasting models.</p>
                 </div>
             </div>
         </div>
 
     </div>
 
-    <script src="script.js"></script>
-    <script src="cv.js"></script>
+    <script src="script.js?v=3"></script>
+    <script src="cv.js?v=2"></script>
     <script>lucide.createIcons();</script>
 </body>
+
 </html>

@@ -40,6 +40,7 @@
     transition: transform 1s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 1s ease, opacity 1s ease;
     position: relative;
     z-index: 1;
+    cursor: none;
     user-select: none;
     -webkit-user-select: none;
 }
@@ -72,7 +73,7 @@
 .cv-page.zoomed, .cert-page.zoomed {
     z-index: 100 !important;
     box-shadow: 0 50px 100px rgba(0,0,0,0.9);
-    cursor: crosshair;
+    cursor: none;
 }
 
 .floating-pages-container:has(.cv-page:hover) .cv-page:not(:hover) {
@@ -174,7 +175,7 @@
     transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.6s ease, z-index 0s;
     position: relative;
     z-index: 1;
-    cursor: crosshair;
+    cursor: none;
     user-select: none;
     -webkit-user-select: none;
     box-shadow: 

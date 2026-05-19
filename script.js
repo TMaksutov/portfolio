@@ -3,6 +3,9 @@ const roomContainer = document.querySelector('.room-container');
 const panWrapper = document.getElementById('pan-wrapper');
 const hotspots = document.querySelectorAll('.hotspot');
 
+let globalMouseX = 0;
+let globalMouseY = 0;
+
 // Window view elements
 const windowView = document.getElementById('window-view');
 const windowBgWrapper = document.getElementById('window-bg-wrapper');
@@ -361,10 +364,17 @@ document.addEventListener('mousemove', (e) => {
     }
 });
 
-// Preload the second background image
+// Preload the second background image and custom cursor images
 window.addEventListener('load', () => {
     const img = new Image();
     img.src = 'assets/images/Main photo 2.png';
+    
+    // Preload custom cursor images to eliminate delay/flash when hovering
+    const pencilImg = new Image();
+    pencilImg.src = 'assets/images/pencil.png?v=3';
+    const clipImg = new Image();
+    clipImg.src = 'assets/images/clip.png?v=3';
+    
     // Preload location images as well!
     preloadLocationImages();
 });
@@ -384,6 +394,15 @@ function openModal(modalId) {
     modal.classList.add('active');
 
     if (modalId === 'modal-contacts') {
+        document.body.classList.add('contacts-active');
+        if (customPointer) {
+            customPointer.src = 'assets/images/clip.png?v=3';
+            customPointer.style.width = '128px';
+            customPointer.style.display = 'block';
+            customPointer.style.transform = 'translate(2px, 2px)';
+            customPointer.style.left = globalMouseX + 'px';
+            customPointer.style.top = globalMouseY + 'px';
+        }
         const scratchCanvas = document.getElementById('scratch-canvas');
         if (scratchCanvas) {
             const ctx = scratchCanvas.getContext('2d');
@@ -479,6 +498,7 @@ function closeModals() {
 
 function finishCloseModals() {
     overlay.classList.remove('show');
+    document.body.classList.remove('contacts-active');
     document.querySelectorAll('.modal-content').forEach(m => {
         m.classList.remove('active');
         m.classList.remove('floating-text-mode');
@@ -519,6 +539,11 @@ function finishCloseModals() {
             c.fallTimeout = null;
         }
     });
+
+    // Hide custom pointer on closing modals
+    if (customPointer) {
+        customPointer.style.display = 'none';
+    }
 }
 
 // Initial positioning for modals (centered)
@@ -614,6 +639,63 @@ document.addEventListener('mousemove', (e) => {
     card.style.boxShadow = `${shadowX}px ${shadowY}px 50px rgba(0,0,0,0.5), 0 20px 40px rgba(0,0,0,0.4)`;
 });
 
-// Reset card on mouse leave (if we want it to return to flat)
 // However, since it's in a modal that captures mouse, we can just leave it or use the overlay click
 
+/* ============================================================
+   CUSTOM CURSOR LOGIC (BYPASS BROWSER SIZE LIMITS)
+   ============================================================ */
+const customPointer = document.getElementById('custom-pointer');
+
+if (customPointer) {
+    document.addEventListener('mousemove', (e) => {
+        globalMouseX = e.clientX;
+        globalMouseY = e.clientY;
+        if (customPointer.style.display === 'block') {
+            customPointer.style.left = e.clientX + 'px';
+            customPointer.style.top = e.clientY + 'px';
+        }
+    });
+
+    // Delegate hover events for business card, cv pages, and cert pages
+    document.addEventListener('mouseover', (e) => {
+        const target = e.target;
+        const contactsActive = document.getElementById('modal-contacts')?.classList.contains('active');
+
+        if (contactsActive || target.closest('.business-card-modal')) {
+            customPointer.src = 'assets/images/clip.png?v=3';
+            customPointer.style.width = '128px';
+            customPointer.style.display = 'block';
+            // Adjust hotspot offset for clip if needed
+            customPointer.style.transform = 'translate(2px, 2px)';
+        } else if (target.closest('.cv-page') || target.closest('.cert-page')) {
+            customPointer.src = 'assets/images/pencil.png?v=3';
+            customPointer.style.width = '256px';
+            customPointer.style.display = 'block';
+            // Adjust hotspot offset for pencil (visually, the tip of the pencil is at 28.05% X, 93.97% Y)
+            customPointer.style.transform = 'translate(-28.05%, -93.97%)';
+        }
+    });
+
+    document.addEventListener('mouseout', (e) => {
+        const target = e.target;
+        const contactsActive = document.getElementById('modal-contacts')?.classList.contains('active');
+
+        if (contactsActive) {
+            // Keep the clip cursor active everywhere until the modal is closed
+            return;
+        }
+
+        // Check if we are leaving a custom cursor area
+        if (target.closest('.business-card-modal')) {
+            // Ensure we aren't just moving between the modal overlay and the hotspot
+            const leavingModal = !e.relatedTarget || !e.relatedTarget.closest('.business-card-modal');
+            if (leavingModal) {
+                customPointer.style.display = 'none';
+            }
+        } else if (target.closest('.cv-page') || target.closest('.cert-page')) {
+            if (!e.relatedTarget || (!e.relatedTarget.closest('.cv-page') && !e.relatedTarget.closest('.cert-page'))) {
+                customPointer.style.display = 'none';
+            }
+        }
+    });
+}

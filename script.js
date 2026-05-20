@@ -823,6 +823,11 @@ function makePanelDraggable(panel) {
     header.style.cursor = 'move';
 
     header.addEventListener('mousedown', (e) => {
+        // Don't intercept clicks on interactive header elements
+        if (e.target.closest('.panel-external-btn') ||
+            e.target.closest('.panel-dot') ||
+            e.target.closest('a')) return;
+
         e.preventDefault();
 
         const zone     = panel.parentElement;

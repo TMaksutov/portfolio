@@ -94,8 +94,8 @@
             </div>
 
             <!-- 7. Monitors (Side Projects) -->
-            <div class="hotspot" id="spot-projects" style="top: 40%; left: 22%; width: 15%; height: 15%;"
-                onclick="openModal('modal-projects')">
+            <div class="hotspot" id="spot-projects" style="top: 40%; left: 22%; width: 15%; height: 15%; cursor: pointer;"
+                onclick="openScreensView()">
                 <div class="hotspot-label">Side Projects</div>
                 <div class="hotspot-summary">gas-flows.com<br>data-forecast.com</div>
             </div>
@@ -180,6 +180,69 @@
             <!-- Close Button -->
             <button class="window-close-btn" onclick="closeWindowView()">&times;</button>
         </div>
+
+        <!-- Screens View Container -->
+        <div class="screens-view" id="screens-view">
+            <!-- Background Image -->
+            <div class="screens-bg-wrapper" id="screens-bg-wrapper">
+                <img src="assets/images/screens.png" alt="Screens View" class="screens-bg-img">
+
+                <!-- HTML text overlay — each panel lives inside its clipping zone -->
+                <div class="screens-text-overlay">
+
+                    <!-- LEFT ZONE CLIP (overflow:hidden clips the panel at the screen boundary) -->
+                    <div class="panel-zone zone-left" id="zone-left">
+                        <div class="screen-panel screen-left">
+                            <div class="panel-header">
+                                <div class="panel-actions">
+                                    <span class="panel-dot red" onclick="closeScreensView()"></span>
+                                    <span class="panel-dot yellow"></span>
+                                    <span class="panel-dot green"></span>
+                                </div>
+                                <div class="panel-address-bar">
+                                    <span class="address-protocol">https://</span>gas-flows.com
+                                </div>
+                                <a href="https://gas-flows.com" target="_blank" class="panel-external-btn" title="Open in new tab">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                                </a>
+                            </div>
+                            <div class="panel-content">
+                                <iframe src="" class="screen-iframe" id="iframe-left" title="gas-flows.com live preview"></iframe>
+                                <div class="panel-interact-overlay" title="Click to interact"><span>Click to interact</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT ZONE CLIP -->
+                    <div class="panel-zone zone-right" id="zone-right">
+                        <div class="screen-panel screen-right">
+                            <div class="panel-header">
+                                <div class="panel-actions">
+                                    <span class="panel-dot red" onclick="closeScreensView()"></span>
+                                    <span class="panel-dot yellow"></span>
+                                    <span class="panel-dot green"></span>
+                                </div>
+                                <div class="panel-address-bar">
+                                    <span class="address-protocol">https://</span>data-forecast.com
+                                </div>
+                                <a href="https://data-forecast.com" target="_blank" class="panel-external-btn" title="Open in new tab">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                                </a>
+                            </div>
+                            <div class="panel-content">
+                                <iframe src="" class="screen-iframe" id="iframe-right" title="data-forecast.com live preview"></iframe>
+                                <div class="panel-interact-overlay" title="Click to interact"><span>Click to interact</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            
+
+            <!-- Close Button -->
+            <button class="screens-close-btn" onclick="closeScreensView()">&times;</button>
+        </div>
     </div>
 
     <!-- Modals Overlay System -->
@@ -210,7 +273,7 @@
                                 <span>+41 79 578 9152</span>
                             </div>
                             <div class="contact-item">
-                                <i data-lucide="linkedin"></i>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-linkedin" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; color: var(--primary-color);"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
                                 <span>linkedin.com/in/timur-maksutov</span>
                             </div>
                         </div>

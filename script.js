@@ -13,6 +13,11 @@ const windowFrameWrapper = document.getElementById('window-frame-wrapper');
 const windowBgBlurred = document.querySelector('.window-bg-blurred');
 const wipeLayer = document.getElementById('wipe-interaction-layer');
 
+// Screens view elements
+const screensView = document.getElementById('screens-view');
+const screensBgWrapper = document.getElementById('screens-bg-wrapper');
+const customPointer = document.getElementById('custom-pointer');
+
 // Preload logic for window location images
 let locationImagesLoaded = false;
 let isPreloadingLocation = false;
@@ -20,6 +25,44 @@ const locationImages = [
     'assets/images/window.png',
     'assets/images/frame.png'
 ];
+
+// Preload logic for screens image
+let screensImageLoaded = false;
+let isPreloadingScreens = false;
+const screensImages = [
+    'assets/images/screens.png'
+];
+
+function preloadScreensImages(callback) {
+    if (screensImageLoaded) {
+        if (callback) callback();
+        return;
+    }
+    if (isPreloadingScreens) {
+        if (callback) {
+            window.addEventListener('screensImagesLoaded', callback, { once: true });
+        }
+        return;
+    }
+    isPreloadingScreens = true;
+    
+    let loadedCount = 0;
+    const total = screensImages.length;
+    
+    screensImages.forEach(src => {
+        const img = new Image();
+        img.onload = img.onerror = () => {
+            loadedCount++;
+            if (loadedCount === total) {
+                screensImageLoaded = true;
+                isPreloadingScreens = false;
+                window.dispatchEvent(new Event('screensImagesLoaded'));
+                if (callback) callback();
+            }
+        };
+        img.src = src;
+    });
+}
 
 function preloadLocationImages(callback) {
     if (locationImagesLoaded) {
@@ -175,6 +218,40 @@ function closeWindowView() {
     }
 }
 
+function revealScreensView() {
+    if (screensView) {
+        screensView.classList.add('active');
+        
+        const iframeLeft = document.getElementById('iframe-left');
+        if (iframeLeft && (!iframeLeft.src || iframeLeft.src === 'about:blank' || iframeLeft.src === window.location.href)) {
+            iframeLeft.src = 'https://gas-flows.com';
+        }
+        
+        const iframeRight = document.getElementById('iframe-right');
+        if (iframeRight && (!iframeRight.src || iframeRight.src === 'about:blank' || iframeRight.src === window.location.href)) {
+            iframeRight.src = 'https://data-forecast.com';
+        }
+    }
+}
+
+function openScreensView() {
+    if (!screensView) return;
+    
+    if (screensImageLoaded) {
+        revealScreensView();
+    } else {
+        preloadScreensImages(() => {
+            revealScreensView();
+        });
+    }
+}
+
+function closeScreensView() {
+    if (screensView) {
+        screensView.classList.remove('active');
+    }
+}
+
 // Get mouse or touch coordinates relative to the interaction layer, mapped to 320x180 resolution
 function getWipePos(e) {
     if (!wipeLayer) return { x: 0, y: 0 };
@@ -280,29 +357,27 @@ hotspots.forEach(hotspot => {
     hotspot.addEventListener('mouseleave', () => panWrapper.classList.remove('has-hover'));
 });
 
-// Parallax & 3D Hover Rotation Logic
-document.addEventListener('mousemove', (e) => {
-    const mouseX = e.clientX;
-    const mouseY = e.clientY;
+// Virtual mouse — tracks real position normally, accumulated during pointer-lock drag
+let virtMouseX = window.innerWidth  / 2;
+let virtMouseY = window.innerHeight / 2;
 
+// Parallax & 3D Hover Rotation Logic — callable with any x,y coordinates
+function runParallax(mouseX, mouseY) {
     // 1. Handle Global Room Parallax (Pan)
     const px = mouseX / window.innerWidth;
     const py = mouseY / window.innerHeight;
-    const panRange = 16.66; // (120 - 100) / 120 * 100 = 16.66%
-    const moveX = (px * -panRange); 
+    const panRange = 16.66;
+    const moveX = (px * -panRange);
     const moveY = (py * -panRange);
     panWrapper.style.transform = `translate(${moveX}%, ${moveY}%)`;
 
     // Window view parallax
     if (windowView && windowView.classList.contains('active')) {
-        // bgRange: larger means it moves more (deepest layer)
-        const bgRange = 15; 
+        const bgRange = 15;
         const bgMoveX = -8.33 + (0.5 - px) * bgRange;
         const bgMoveY = -8.33 + (0.5 - py) * bgRange;
         if(windowBgWrapper) windowBgWrapper.style.transform = `translate(${bgMoveX}%, ${bgMoveY}%)`;
 
-        // frameRange: smaller means it moves less horizontally (front-most layer, text is locked inside here)
-        // For 110% wrapper size, max range without showing edges is 9.09
         const frameRangeX = 5;
         const frameRangeY = 9.09;
         const frameMoveX = -4.54 + (0.5 - px) * frameRangeX;
@@ -310,32 +385,33 @@ document.addEventListener('mousemove', (e) => {
         if(windowFrameWrapper) windowFrameWrapper.style.transform = `translate(${frameMoveX}%, ${frameMoveY}%)`;
     }
 
+    // Screens view parallax
+    if (screensView && screensView.classList.contains('active')) {
+        const bgRange = 15;
+        const bgMoveX = -8.33 + (0.5 - px) * bgRange;
+        const bgMoveY = -8.33 + (0.5 - py) * bgRange;
+        if(screensBgWrapper) screensBgWrapper.style.transform = `translate(${bgMoveX}%, ${bgMoveY}%)`;
+    }
+
     // 2. Handle 3D Rotation for Hovered Hotspot
     hotspots.forEach(hotspot => {
         const rect = hotspot.getBoundingClientRect();
-        
-        // Check if mouse is inside this hotspot (with a little padding)
         if (mouseX >= rect.left - 10 && mouseX <= rect.right + 10 &&
-            mouseY >= rect.top - 10 && mouseY <= rect.bottom + 10) {
-            
+            mouseY >= rect.top - 10  && mouseY <= rect.bottom + 10) {
             const centerX = rect.left + rect.width / 2;
-            const centerY = rect.top + rect.height / 2;
-            
-            const dx = (mouseX - centerX) / (rect.width / 2 + 50);
+            const centerY = rect.top  + rect.height / 2;
+            const dx = (mouseX - centerX) / (rect.width  / 2 + 50);
             const dy = (mouseY - centerY) / (rect.height / 2 + 50);
-            
-            const rotateX = -dy * 45; 
-            const rotateY = dx * 45;
-            
-            const label = hotspot.querySelector('.hotspot-label');
+            const rotateX = -dy * 45;
+            const rotateY =  dx * 45;
+            const label   = hotspot.querySelector('.hotspot-label');
             const summary = hotspot.querySelector('.hotspot-summary');
-            
-            if (label) label.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(20px)`;
+            if (label)   label.style.transform   = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(20px)`;
             if (summary) summary.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(10px)`;
         } else {
-            const label = hotspot.querySelector('.hotspot-label');
+            const label   = hotspot.querySelector('.hotspot-label');
             const summary = hotspot.querySelector('.hotspot-summary');
-            if (label) label.style.transform = `rotateX(0) rotateY(0) translateZ(0)`;
+            if (label)   label.style.transform   = `rotateX(0) rotateY(0) translateZ(0)`;
             if (summary) summary.style.transform = `rotateX(0) rotateY(0) translateZ(0) translateY(10px)`;
         }
     });
@@ -343,26 +419,32 @@ document.addEventListener('mousemove', (e) => {
     // 3. Handle 3D Rotation for Floating Text Mode Modal
     const summaryModal = document.getElementById('modal-summary');
     if (summaryModal && summaryModal.classList.contains('active') && summaryModal.classList.contains('floating-text-mode')) {
-        const rect = summaryModal.getBoundingClientRect();
-        
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-        
-        const dx = (mouseX - centerX) / (window.innerWidth / 2);
-        const dy = (mouseY - centerY) / (window.innerHeight / 2);
-        
-        const rotateX = -dy * 10; 
-        const rotateY = dx * 10;
-        
-        const title = summaryModal.querySelector('.section-title');
-        const texts = summaryModal.querySelectorAll('.summary-text');
-        
+        const rect    = summaryModal.getBoundingClientRect();
+        const centerX = rect.left + rect.width  / 2;
+        const centerY = rect.top  + rect.height / 2;
+        const dx      = (mouseX - centerX) / (window.innerWidth  / 2);
+        const dy      = (mouseY - centerY) / (window.innerHeight / 2);
+        const rotateX = -dy * 10;
+        const rotateY =  dx * 10;
+        const title   = summaryModal.querySelector('.section-title');
+        const texts   = summaryModal.querySelectorAll('.summary-text');
         if (title) title.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(20px)`;
         texts.forEach(text => {
             text.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(10px)`;
         });
     }
+}
+
+// Normal mouse movement — update virtual position and run parallax
+document.addEventListener('mousemove', (e) => {
+    // During pointer lock, clientX/Y are frozen — skip updating virtual position here
+    if (!document.pointerLockElement && !document.mozPointerLockElement) {
+        virtMouseX = e.clientX;
+        virtMouseY = e.clientY;
+    }
+    runParallax(virtMouseX, virtMouseY);
 });
+
 
 // Preload the second background image and custom cursor images
 window.addEventListener('load', () => {
@@ -370,13 +452,12 @@ window.addEventListener('load', () => {
     img.src = 'assets/images/Main photo 2.png';
     
     // Preload custom cursor images to eliminate delay/flash when hovering
-    const pencilImg = new Image();
-    pencilImg.src = 'assets/images/pencil.png?v=3';
     const clipImg = new Image();
     clipImg.src = 'assets/images/clip.png?v=3';
     
-    // Preload location images as well!
+    // Preload location and screens images as well!
     preloadLocationImages();
+    preloadScreensImages();
 });
 
 // Modal Logic
@@ -644,7 +725,7 @@ document.addEventListener('mousemove', (e) => {
 /* ============================================================
    CUSTOM CURSOR LOGIC (BYPASS BROWSER SIZE LIMITS)
    ============================================================ */
-const customPointer = document.getElementById('custom-pointer');
+// customPointer is declared at the top of the file to prevent TDZ ReferenceErrors
 
 if (customPointer) {
     document.addEventListener('mousemove', (e) => {
@@ -667,12 +748,6 @@ if (customPointer) {
             customPointer.style.display = 'block';
             // Adjust hotspot offset for clip if needed
             customPointer.style.transform = 'translate(2px, 2px)';
-        } else if (target.closest('.cv-page') || target.closest('.cert-page')) {
-            customPointer.src = 'assets/images/pencil.png?v=3';
-            customPointer.style.width = '256px';
-            customPointer.style.display = 'block';
-            // Adjust hotspot offset for pencil (visually, the tip of the pencil is at 28.05% X, 93.97% Y)
-            customPointer.style.transform = 'translate(-28.05%, -93.97%)';
         }
     });
 
@@ -692,10 +767,169 @@ if (customPointer) {
             if (leavingModal) {
                 customPointer.style.display = 'none';
             }
-        } else if (target.closest('.cv-page') || target.closest('.cert-page')) {
-            if (!e.relatedTarget || (!e.relatedTarget.closest('.cv-page') && !e.relatedTarget.closest('.cert-page'))) {
-                customPointer.style.display = 'none';
-            }
         }
     });
 }
+
+// Global Escape Key Listener to dismiss any active visual layers/modals
+window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        closeWindowView();
+        closeScreensView();
+        closeModals();
+    }
+});
+
+/* ============================================================
+   SIDE PROJECTS SCREEN VIEWS & MODES
+   ============================================================ */
+
+/* ============================================================
+   PANEL DRAG — pointer lock confines cursor to zone boundary
+   ============================================================ */
+
+// One shared fake cursor element shown during drag (real cursor is hidden by pointer lock)
+const fakeCursor = document.createElement('div');
+fakeCursor.id = 'fake-drag-cursor';
+document.body.appendChild(fakeCursor);
+
+function makePanelDraggable(panel) {
+    const header = panel.querySelector('.panel-header');
+    if (!header) return;
+
+    // px position of panel within its zone container
+    let virtX = 0;
+    let virtY = 0;
+    // screen-space position of the fake cursor
+    let cursorX = 0;
+    let cursorY = 0;
+
+    // Coordinate badge
+    const badge = document.createElement('div');
+    badge.className = 'panel-coords-badge';
+    panel.appendChild(badge);
+
+    function updateBadge() {
+        const zone = panel.parentElement;
+        if (!zone) return;
+        const zoneRect = zone.getBoundingClientRect();
+        const panelRect = panel.getBoundingClientRect();
+        const lp = ((panelRect.left - zoneRect.left) / zoneRect.width  * 100).toFixed(1);
+        const tp = ((panelRect.top  - zoneRect.top)  / zoneRect.height * 100).toFixed(1);
+        badge.innerHTML = `left: ${lp}%, top: ${tp}%`;
+    }
+
+    setTimeout(updateBadge, 200);
+    header.style.cursor = 'move';
+
+    header.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+
+        const zone     = panel.parentElement;
+        const zoneRect = zone.getBoundingClientRect();
+        const panelRect = panel.getBoundingClientRect();
+
+        // Start virtual panel position (px within zone)
+        virtX = panelRect.left - zoneRect.left;
+        virtY = panelRect.top  - zoneRect.top;
+
+        // Start fake cursor at real mouse position
+        cursorX = e.clientX;
+        cursorY = e.clientY;
+        fakeCursor.style.left    = cursorX + 'px';
+        fakeCursor.style.top     = cursorY + 'px';
+        fakeCursor.style.display = 'block';
+
+        panel.style.transition = 'none';
+
+        // Request pointer lock — browser will hide real cursor & give movementX/Y
+        header.requestPointerLock = header.requestPointerLock || header.mozRequestPointerLock;
+        header.requestPointerLock();
+
+        document.addEventListener('pointerlockchange', onLockChange);
+        document.addEventListener('mozpointerlockchange', onLockChange);
+        document.addEventListener('mouseup', onMouseUp);
+    });
+
+    function onLockChange() {
+        const locked = document.pointerLockElement === header ||
+                       document.mozPointerLockElement === header;
+        if (locked) {
+            document.addEventListener('mousemove', onMouseMove);
+        } else {
+            stopDrag();
+        }
+    }
+
+    function onMouseMove(e) {
+        const zone     = panel.parentElement;
+        const zoneRect = zone.getBoundingClientRect();
+
+        // Accumulate raw delta — NO clamping on panel position
+        // Panel slides freely; overflow:hidden on zone clips it visually
+        virtX += e.movementX;
+        virtY += e.movementY;
+
+        panel.style.left = virtX + 'px';
+        panel.style.top  = virtY + 'px';
+
+        // Cursor IS clamped to zone edges — mouse stops at the screen border
+        cursorX = Math.max(zoneRect.left, Math.min(cursorX + e.movementX, zoneRect.right));
+        cursorY = Math.max(zoneRect.top,  Math.min(cursorY + e.movementY, zoneRect.bottom));
+        fakeCursor.style.left = cursorX + 'px';
+        fakeCursor.style.top  = cursorY + 'px';
+
+        // Keep background parallax moving — accumulate into global virtual mouse
+        virtMouseX = Math.max(0, Math.min(virtMouseX + e.movementX, window.innerWidth));
+        virtMouseY = Math.max(0, Math.min(virtMouseY + e.movementY, window.innerHeight));
+        runParallax(virtMouseX, virtMouseY);
+
+        updateBadge();
+    }
+
+    function onMouseUp() {
+        const exitLock = document.exitPointerLock || document.mozExitPointerLock;
+        if (exitLock) exitLock.call(document);
+    }
+
+    function stopDrag() {
+        panel.style.transition = '';
+        fakeCursor.style.display = 'none';
+        document.removeEventListener('mousemove',          onMouseMove);
+        document.removeEventListener('mouseup',            onMouseUp);
+        document.removeEventListener('pointerlockchange',  onLockChange);
+        document.removeEventListener('mozpointerlockchange', onLockChange);
+        updateBadge();
+    }
+
+    window.addEventListener('resize', updateBadge);
+}
+
+// Initialize
+const leftPanel  = document.querySelector('.screen-panel.screen-left');
+const rightPanel = document.querySelector('.screen-panel.screen-right');
+if (leftPanel)  makePanelDraggable(leftPanel);
+if (rightPanel) makePanelDraggable(rightPanel);
+
+/* ============================================================
+   INTERACT OVERLAY — click to enable iframe, leave panel to restore
+   ============================================================ */
+document.querySelectorAll('.screen-panel').forEach(function(panel) {
+    var overlay = panel.querySelector('.panel-interact-overlay');
+    var content = panel.querySelector('.panel-content');
+    if (!overlay || !content) return;
+
+    // Click overlay → enable iframe interaction
+    overlay.addEventListener('click', function() {
+        overlay.style.display = 'none';
+        content.classList.add('interactive');
+    });
+
+    // Mouse leaves the whole panel → restore overlay (parallax resumes)
+    panel.addEventListener('mouseleave', function() {
+        overlay.style.display = '';
+        content.classList.remove('interactive');
+    });
+});
+
+

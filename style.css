@@ -831,15 +831,31 @@ body.contacts-active * {
 
 .screen-panel.screen-left {
     left: 8.0%;
-    top: 16.6%;
+    top: 21.6%; /* Moved 5% down from 16.6% */
+    transform: translate(-120%, 0);
+    opacity: 0;
+    transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 1.2s ease, border-color 0.4s ease, box-shadow 0.4s ease;
 }
 
 .screen-panel.screen-right {
     left: 52.7%;
-    top: 16.2%;
+    top: 21.2%; /* Moved 5% down from 16.2% */
+    transform: translate(120%, 0);
+    opacity: 0;
+    transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 1.2s ease, border-color 0.4s ease, box-shadow 0.4s ease;
 }
 
-.screen-panel:hover {
+.screens-view.active .screen-panel.screen-left {
+    transform: translate(0, 0);
+    opacity: 1;
+}
+
+.screens-view.active .screen-panel.screen-right {
+    transform: translate(0, 0);
+    opacity: 1;
+}
+
+.screens-view.active .screen-panel:hover {
     border-color: var(--primary-color);
     box-shadow: 0 35px 80px rgba(99, 102, 241, 0.3);
     transform: translateY(-8px) scale(1.02);

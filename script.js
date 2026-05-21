@@ -249,6 +249,17 @@ function openScreensView() {
 function closeScreensView() {
     if (screensView) {
         screensView.classList.remove('active');
+        // Reset panel positions back to CSS defaults so they slide-in animate next time
+        const leftPanel = document.querySelector('.screen-panel.screen-left');
+        const rightPanel = document.querySelector('.screen-panel.screen-right');
+        if (leftPanel) {
+            leftPanel.style.left = '';
+            leftPanel.style.top = '';
+        }
+        if (rightPanel) {
+            rightPanel.style.left = '';
+            rightPanel.style.top = '';
+        }
     }
 }
 

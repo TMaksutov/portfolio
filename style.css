@@ -825,7 +825,7 @@ body.contacts-active * {
     flex-direction: column;
     overflow: hidden;
     pointer-events: auto;
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, box-shadow 0.4s ease;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
     backdrop-filter: blur(20px);
 }
 
@@ -834,7 +834,6 @@ body.contacts-active * {
     top: 21.6%; /* Moved 5% down from 16.6% */
     transform: translate(-120%, 0);
     opacity: 0;
-    transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 1.2s ease, border-color 0.4s ease, box-shadow 0.4s ease;
 }
 
 .screen-panel.screen-right {
@@ -842,7 +841,15 @@ body.contacts-active * {
     top: 21.2%; /* Moved 5% down from 16.2% */
     transform: translate(120%, 0);
     opacity: 0;
-    transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 1.2s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+/* Sequential slow slide-in entry animation when opening screens view */
+.screens-view.entering .screen-panel.screen-left {
+    transition: transform 2.2s cubic-bezier(0.16, 1, 0.3, 1) 1.0s, opacity 2.2s ease 1.0s;
+}
+
+.screens-view.entering .screen-panel.screen-right {
+    transition: transform 2.2s cubic-bezier(0.16, 1, 0.3, 1) 3.2s, opacity 2.2s ease 3.2s;
 }
 
 .screens-view.active .screen-panel.screen-left {

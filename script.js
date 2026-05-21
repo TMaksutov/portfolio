@@ -105,6 +105,7 @@ maskCanvas.height = maskH;
 
 let condensationInterval = null;
 let condensationDelayTimeout = null;
+let enteringTimeout = null;
 let isWiping = false;
 let lastWipeX = 0;
 let lastWipeY = 0;
@@ -220,7 +221,17 @@ function closeWindowView() {
 
 function revealScreensView() {
     if (screensView) {
+        if (enteringTimeout) {
+            clearTimeout(enteringTimeout);
+        }
         screensView.classList.add('active');
+        screensView.classList.add('entering');
+        
+        // Remove 'entering' class after the sequential animation completes (5.8 seconds total)
+        enteringTimeout = setTimeout(() => {
+            screensView.classList.remove('entering');
+            enteringTimeout = null;
+        }, 5800);
         
         const iframeLeft = document.getElementById('iframe-left');
         if (iframeLeft && (!iframeLeft.src || iframeLeft.src === 'about:blank' || iframeLeft.src === window.location.href)) {
@@ -248,7 +259,12 @@ function openScreensView() {
 
 function closeScreensView() {
     if (screensView) {
+        if (enteringTimeout) {
+            clearTimeout(enteringTimeout);
+            enteringTimeout = null;
+        }
         screensView.classList.remove('active');
+        screensView.classList.remove('entering');
         // Reset panel positions back to CSS defaults so they slide-in animate next time
         const leftPanel = document.querySelector('.screen-panel.screen-left');
         const rightPanel = document.querySelector('.screen-panel.screen-right');

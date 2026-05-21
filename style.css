@@ -5,6 +5,18 @@
     --glass-bg: rgba(15, 23, 42, 0.85);
     --glass-border: rgba(255, 255, 255, 0.15);
     --transition: all 0.3s ease;
+
+    /* LEFT MONITOR CORNERS */
+    --left-1-x: 5.8%;  --left-1-y: 17.2%;
+    --left-2-x: 49.5%; --left-2-y: 17.7%;
+    --left-3-x: 49.5%; --left-3-y: 65.5%;
+    --left-4-x: 6.1%;  --left-4-y: 67.0%;
+
+    /* RIGHT MONITOR CORNERS */
+    --right-1-x: 50.5%; --right-1-y: 17.5%;
+    --right-2-x: 94.3%; --right-2-y: 17.2%;
+    --right-3-x: 93.9%; --right-3-y: 66.5%;
+    --right-4-x: 50.6%; --right-4-y: 65.5%;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -751,7 +763,11 @@ body.contacts-active * {
     left: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    /* object-fit: fill stretches the image to always exactly fill the wrapper.
+       This is critical: with cover, the image crops at different aspect ratios
+       and the monitor positions shift relative to the container %, breaking zone alignment.
+       fill guarantees zone % coords always hit the same spot in the image at any viewport size. */
+    object-fit: fill;
     pointer-events: none;
 }
 
@@ -814,13 +830,13 @@ body.contacts-active * {
 }
 
 .screen-panel.screen-left {
-    left: 5%;
-    top: 5%;
+    left: 8.0%;
+    top: 16.6%;
 }
 
 .screen-panel.screen-right {
-    left: 5%;
-    top: 5%;
+    left: 52.7%;
+    top: 16.2%;
 }
 
 .screen-panel:hover {
@@ -839,28 +855,32 @@ body.contacts-active * {
     pointer-events: auto;
 }
 
-/* Left zone: bounding box of the 4 calibrated corners */
-/* Points (absolute %): TL(5.8,13.6) TR(49.4,13.8) BR(49.5,67.5) BL(6.1,69.0) */
-/* Converted to % within this bounding box (w=43.7, h=55.4): */
+/* Left zone: 4 independent absolute corners directly inside the clip-path */
 .panel-zone.zone-left {
-    left:   5.8%;
-    top:    13.6%;
-    width:  43.7%;
-    height: 55.4%;
-    /* TL=(0%,0%) TR=(99.8%,0.4%) BR=(100%,97.3%) BL=(0.7%,100%) */
-    clip-path: polygon(0% 0%, 99.8% 0.4%, 100% 97.3%, 0.7% 100%);
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    clip-path: polygon(
+        var(--left-1-x) var(--left-1-y),
+        var(--left-2-x) var(--left-2-y),
+        var(--left-3-x) var(--left-3-y),
+        var(--left-4-x) var(--left-4-y)
+    );
 }
 
-/* Right zone: bounding box of the 4 calibrated corners */
-/* Points (absolute %): TL(50.5,13.8) TR(94.3,13.4) BR(93.9,68.4) BL(50.6,67.5) */
-/* Converted to % within this bounding box (w=43.8, h=55.0): */
+/* Right zone: 4 independent absolute corners directly inside the clip-path */
 .panel-zone.zone-right {
-    left:   50.5%;
-    top:    13.4%;
-    width:  43.8%;
-    height: 55.0%;
-    /* TL=(0%,0.7%) TR=(100%,0%) BR=(99.1%,100%) BL=(0.2%,98.4%) */
-    clip-path: polygon(0% 0.7%, 100% 0%, 99.1% 100%, 0.2% 98.4%);
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    clip-path: polygon(
+        var(--right-1-x) var(--right-1-y),
+        var(--right-2-x) var(--right-2-y),
+        var(--right-3-x) var(--right-3-y),
+        var(--right-4-x) var(--right-4-y)
+    );
 }
 
 /* Fake cursor shown during pointer-lock panel drag */
@@ -1017,15 +1037,6 @@ body.contacts-active * {
 
 /* Responsive screens styling for tablets and mobile */
 @media (max-width: 1024px) {
-    .screens-text-overlay {
-        flex-direction: column;
-        gap: 2.5rem;
-        overflow-y: auto;
-        padding-top: 5rem;
-        padding-bottom: 2rem;
-        pointer-events: auto;
-    }
-    
     .screen-panel {
         width: 90%;
         max-width: 90%;

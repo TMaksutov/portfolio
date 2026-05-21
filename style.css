@@ -1459,3 +1459,117 @@ body.contacts-active * {
     100% { opacity: 1; }
 }
 
+/* ============================================================
+   FLOATING FULLSCREEN BUTTON
+   ============================================================ */
+
+.fullscreen-btn {
+    position: fixed;
+    top: 2rem;
+    left: 2rem;
+    z-index: 99999; /* Always on top of all modals, overlays, and custom pointers */
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 50px;
+    padding: 0.45rem 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-main);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    letter-spacing: 0.5px;
+    pointer-events: auto;
+}
+
+.fullscreen-btn:hover {
+    background: rgba(99, 102, 241, 0.25);
+    border-color: rgba(99, 102, 241, 0.6);
+    box-shadow: 0 8px 32px 0 rgba(99, 102, 241, 0.2);
+    transform: translateY(-2px);
+}
+
+.fullscreen-btn:active {
+    transform: translateY(1px);
+}
+
+/* Icon Container & Animations */
+.fs-icon-container {
+    position: relative;
+    width: 15px;
+    height: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fs-icon-container svg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    stroke: var(--text-main);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+}
+
+.fullscreen-btn .fs-icon-exit {
+    opacity: 0;
+    transform: scale(0.6) rotate(-45deg);
+}
+
+.fullscreen-btn .fs-icon-enter {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+}
+
+/* Active fullscreen state: Morph icons */
+.fullscreen-btn.is-fullscreen .fs-icon-enter {
+    opacity: 0;
+    transform: scale(0.6) rotate(45deg);
+}
+
+.fullscreen-btn.is-fullscreen .fs-icon-exit {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+}
+
+/* Shortcut badge inside button */
+.fs-shortcut {
+    background: rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 0.1rem 0.35rem;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.fullscreen-btn:hover .fs-shortcut {
+    background: rgba(99, 102, 241, 0.4);
+    color: #fff;
+    border-color: rgba(99, 102, 241, 0.2);
+}
+
+/* Invitation Pulse Animation */
+@keyframes fs-pulse {
+    0% {
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37), 0 0 0 0 rgba(99, 102, 241, 0.4);
+    }
+    70% {
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37), 0 0 0 10px rgba(99, 102, 241, 0);
+    }
+    100% {
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37), 0 0 0 0 rgba(99, 102, 241, 0);
+    }
+}
+
+.fullscreen-btn.invite-pulse {
+    animation: fs-pulse 2s infinite;
+}
+

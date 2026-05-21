@@ -964,4 +964,46 @@ document.querySelectorAll('.screen-panel').forEach(function(panel) {
     });
 });
 
+/* ============================================================
+   FLOATING FULLSCREEN BUTTON LOGIC
+   ============================================================ */
+
+function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+            console.error(`Error attempting to enable fullscreen: ${err.message}`);
+        });
+    } else {
+        document.exitFullscreen();
+    }
+}
+
+document.addEventListener('fullscreenchange', () => {
+    const fsBtn = document.getElementById('fullscreen-btn');
+    if (!fsBtn) return;
+    
+    const textSpan = fsBtn.querySelector('.fs-text');
+    const shortcutSpan = fsBtn.querySelector('.fs-shortcut');
+    if (document.fullscreenElement) {
+        fsBtn.classList.add('is-fullscreen');
+        if (textSpan) textSpan.textContent = 'Exit full screen mode';
+        if (shortcutSpan) shortcutSpan.textContent = 'Esc';
+    } else {
+        fsBtn.classList.remove('is-fullscreen');
+        if (textSpan) textSpan.textContent = 'Activate full screen for better visual experience';
+        if (shortcutSpan) shortcutSpan.textContent = 'F11';
+    }
+});
+
+// Remove invitation pulse when user interacts with it
+const fsBtn = document.getElementById('fullscreen-btn');
+if (fsBtn) {
+    fsBtn.addEventListener('mouseenter', () => {
+        fsBtn.classList.remove('invite-pulse');
+    }, { once: true });
+    fsBtn.addEventListener('click', () => {
+        fsBtn.classList.remove('invite-pulse');
+    }, { once: true });
+}
+
 

@@ -213,6 +213,27 @@ body { background: #000; color: var(--text-main); font-family: 'Inter', sans-ser
     transform: translateY(0);
 }
 
+/* Dynamic Symbol-by-Symbol Cascading Summary Entry */
+.summary-symbol {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.25s ease-out, transform 0.25s ease-out;
+}
+
+.hotspot:hover .summary-symbol {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Force snappy removal when mouse leaves (ignoring inline transition-delay) */
+.hotspot:not(:hover) .summary-symbol {
+    transition: opacity 0.15s ease, transform 0.15s ease !important;
+    transition-delay: 0s !important;
+    opacity: 0 !important;
+    transform: translateY(4px) !important;
+}
+
 /* Floating Info Cards */
 .modal-overlay {
     position: fixed;
@@ -689,7 +710,7 @@ body { background: #000; color: var(--text-main); font-family: 'Inter', sans-ser
     flex-direction: column;
     align-items: center; /* Centered layout from preview */
     gap: 1rem;
-    width: 480px; /* Constrain width for perfect wrapping */
+    width: 576px; /* Constrain width for perfect wrapping (increased by 20% from 480px) */
     z-index: 10; /* Ensure text is layered on top of the frame-image */
     pointer-events: none; /* Crucial: lets click and drag events pass straight through the text box to the wiping layer */
 }
@@ -1954,7 +1975,7 @@ body.contacts-active * {
 .career-slide-counter {
     position: absolute;
     top: 24px;
-    right: 28px;
+    left: 28px;
     z-index: 150;
     font-family: 'Cormorant Garamond', 'Georgia', serif;
     font-size: 13px;
@@ -1969,31 +1990,53 @@ body.contacts-active * {
     font-weight: 400;
 }
 
-/* ── Close Button ── */
+/* ============================================================
+   UNIFIED CLOSE BUTTON STYLES (ALIGNED WITH CAREER MODAL)
+   ============================================================ */
+.close-btn,
+.window-close-btn,
+.screens-close-btn,
 .career-close-btn {
-    position: absolute;
-    top: 20px;
-    left: 28px;
-    z-index: 200;
-    background: rgba(245,240,232,0.08);
-    border: 1px solid rgba(245,240,232,0.15);
-    border-radius: 50%;
-    width: 44px;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: rgba(245,240,232,0.7);
-    font-size: 1.5rem;
-    line-height: 1;
-    cursor: pointer;
-    backdrop-filter: blur(6px);
-    transition: background 0.3s ease, color 0.3s ease, transform 0.3s ease;
+    position: fixed !important;
+    top: 20px !important;
+    right: 28px !important;
+    left: auto !important;
+    z-index: 2000 !important; /* Always on top of all modals and custom pointers */
+    background: rgba(245, 240, 232, 0.08) !important;
+    border: 1px solid rgba(245, 240, 232, 0.15) !important;
+    border-radius: 50% !important;
+    width: 44px !important;
+    height: 44px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: rgba(245, 240, 232, 0.7) !important;
+    font-size: 1.5rem !important;
+    line-height: 1 !important;
+    cursor: pointer !important;
+    backdrop-filter: blur(6px) !important;
+    -webkit-backdrop-filter: blur(6px) !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    outline: none !important;
+    transition: background 0.3s ease, color 0.3s ease, transform 0.3s ease !important;
+    transform: none !important;
+    box-sizing: border-box !important;
 }
 
+.close-btn:hover,
+.window-close-btn:hover,
+.screens-close-btn:hover,
 .career-close-btn:hover {
-    background: rgba(245,240,232,0.2);
-    color: #fff;
-    transform: rotate(90deg);
+    background: rgba(245, 240, 232, 0.2) !important;
+    color: #fff !important;
+    transform: rotate(90deg) !important;
+}
+
+/* Ensure the business card modal close button hides the system cursor to let the paperclip custom pointer draw cleanly */
+.modal-overlay:has(#modal-contacts.active) .close-btn {
+    cursor: none !important;
 }
 

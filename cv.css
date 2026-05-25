@@ -145,10 +145,6 @@
     background: rgba(255, 255, 255, 0.2);
 }
 
-/* Hide default close button for CV spread */
-.cv-modal-spread .close-btn {
-    display: none;
-}
 
 /* Certificates Spread */
 /* Certificates Spread */

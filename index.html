@@ -34,7 +34,7 @@
                 onclick="openModal('modal-summary')">
 
                 <div class="hotspot-label">TIMUR MAKSUTOV</div>
-                <div class="hotspot-summary">Project manager, Product owner, Team leader with over 15 years expertise in engineering, digital transformation, software development, and AI solutions within Oil & Gas and MedTech industries.</div>
+                <div class="hotspot-summary">Project manager, Product owner, Team leader with over 15 years expertise in engineering, digital transformation, software development, and AI solutions within Oil & Gas and MedTech industries.<br><br><i>Click to explore</i></div>
             </div>
 
             <!-- 2. Toys on Shelves (Career Path) -->
@@ -49,7 +49,8 @@
                     Chief Technologist | Gazprom Transgaz Moscow (2017–2019)<br>
                     Specialist & Gas Engineer | Gazprom Transgaz Moscow (2013–2017)<br>
                     Automation System Engineer | NPF Inkram (2010–2013)<br>
-                    Electrician on Drilling Rig | Nabors Drilling (2010)
+                    Electrician on Drilling Rig | Nabors Drilling (2010)<br><br>
+                    <i>Click to explore</i>
                 </div>
             </div>
 
@@ -60,7 +61,8 @@
                 <div class="hotspot-summary">
                     <b>Strategic Leadership</b><br>R&D Management, AI Strategy, Digital Transformation<br><br>
                     <b>Governance & Quality</b><br>QMS (ISO 13485, 9001), Regulatory Compliance, Risk Mgmt<br><br>
-                    <b>Product Excellence</b><br>Requirements Engineering, Agile/SAFe, Product Lifecycle Mgmt
+                    <b>Product Excellence</b><br>Requirements Engineering, Agile/SAFe, Product Lifecycle Mgmt<br><br>
+                    <i>Click to explore</i>
                 </div>
             </div>
 
@@ -73,7 +75,8 @@
                     <small>Oil&Gas | MedTech</small><br>
                     maksutov.ch@gmail.com<br>
                     +41 79 578 9152<br>
-                    <a href="https://linkedin.com/in/timur-maksutov" target="_blank">linkedin.com/in/timur-maksutov</a>
+                    <a href="https://linkedin.com/in/timur-maksutov" target="_blank">linkedin.com/in/timur-maksutov</a><br><br>
+                    <i>Click to explore</i>
                 </div>
             </div>
 
@@ -81,7 +84,7 @@
             <div class="hotspot" id="spot-cv" style="top: 73%; left: 26%; width: 18%; height: 15%;"
                 onclick="openModal('modal-cv')">
                 <div class="hotspot-label">CV</div>
-                <div class="hotspot-summary">Professional Experience & Skills<br>Click to view PDF</div>
+                <div class="hotspot-summary">Professional Experience & Skills<br><br><i>Click to explore</i></div>
             </div>
 
             <!-- 6. Flags on Table (Languages) -->
@@ -99,7 +102,7 @@
             <div class="hotspot" id="spot-projects" style="top: 40%; left: 22%; width: 15%; height: 15%; cursor: pointer;"
                 onclick="openScreensView()">
                 <div class="hotspot-label">Side Projects</div>
-                <div class="hotspot-summary">gas-flows.com<br>data-forecast.com</div>
+                <div class="hotspot-summary">gas-flows.com<br>data-forecast.com<br><br><i>Click to explore</i></div>
             </div>
 
             <!-- 8. Drawing Rolls (Industrial Projects) -->
@@ -139,7 +142,8 @@
                     ISO 31000 Risk Management<br>
                     ISO 13485 Internal Auditor<br>
                     ISO 9001 QMS Auditor<br>
-                    IBM Data Analyst Professional<br>
+                    IBM Data Analyst Professional<br><br>
+                    <i>Click to explore</i>
                 </div>
             </div>
 
@@ -150,7 +154,8 @@
                 <div class="hotspot-label">Location</div>
                 <div class="hotspot-summary">
                     6300 Zug Switzerland<br>
-                    Residence: Permit C
+                    Residence: Permit C<br><br>
+                    <i>Click to explore</i>
                 </div>
             </div>
         </div>
@@ -209,7 +214,7 @@
                                 </a>
                             </div>
                             <div class="panel-content">
-                                <iframe src="" class="screen-iframe" id="iframe-left" title="gas-flows.com live preview"></iframe>
+                                <iframe src="about:blank" class="screen-iframe" id="iframe-left" title="gas-flows.com live preview"></iframe>
                                 <div class="panel-interact-overlay" title="Click to interact"><span>Click to interact</span></div>
                             </div>
                         </div>
@@ -232,7 +237,7 @@
                                 </a>
                             </div>
                             <div class="panel-content">
-                                <iframe src="" class="screen-iframe" id="iframe-right" title="data-forecast.com live preview"></iframe>
+                                <iframe src="about:blank" class="screen-iframe" id="iframe-right" title="data-forecast.com live preview"></iframe>
                                 <div class="panel-interact-overlay" title="Click to interact"><span>Click to interact</span></div>
                             </div>
                         </div>
@@ -249,10 +254,10 @@
 
     <!-- Modals Overlay System -->
     <div class="modal-overlay" id="global-overlay" onclick="closeModals()">
+        <button class="close-btn" onclick="closeModals()">&times;</button>
 
         <!-- 1. Contacts Modal (Business Card) -->
         <div class="modal-content business-card-modal" id="modal-contacts" onclick="event.stopPropagation()">
-            <span class="close-btn" onclick="closeModals()">&times;</span>
             <div class="business-card-container">
                 <div class="business-card" id="business-card">
                     <canvas id="scratch-canvas" class="scratch-layer"></canvas>
@@ -286,7 +291,6 @@
 
         <!-- 2. Summary Modal -->
         <div class="modal-content glass" id="modal-summary" onclick="event.stopPropagation()">
-            <span class="close-btn" onclick="closeModals()">&times;</span>
             <h2 class="section-title"><i data-lucide="info"></i> Professional Profile & Summary</h2>
             <p class="summary-text" style="margin-bottom: 1rem;">Engineering and digitalization leader with 15 years of experience bridging the gap between traditional industrial engineering and advanced technology. Most recently, I successfully delivered a portfolio of complex technical projects while managing a cross-functional team. Currently, I serve as an AI/Data Lead, where I architect and drive internal machine learning and innovation initiatives. I specialize in turning ambitious R&D concepts into tangible business value and am highly driven to lead enterprise-level digitalization.</p>
             <ul style="margin-left: 1.5rem; margin-bottom: 1rem; color: #cbd5e1; font-size: 1.1rem; line-height: 1.6;">
@@ -298,7 +302,6 @@
 
         <!-- 3. Tech Stack Modal -->
         <div class="modal-content glass wide" id="modal-stack" onclick="event.stopPropagation()">
-            <span class="close-btn" onclick="closeModals()">&times;</span>
             <h2 class="section-title"><i data-lucide="cpu"></i> Core Competencies & Skills</h2>
             <div class="three-col">
                 <div class="skill-category">
@@ -338,7 +341,6 @@
 
         <!-- 4. Experience Modal — Filmstrip Career Slider -->
         <div class="modal-content career-filmstrip-modal" id="modal-experience" onclick="event.stopPropagation()">
-            <button class="career-close-btn" onclick="closeModals()">&times;</button>
 
             <!-- Mouse parallax background (mirrors main room bg) -->
             <div class="career-bg-parallax" id="career-bg-parallax">
@@ -490,7 +492,6 @@
 
         <!-- 5. CV Modal (Floating Pages) -->
         <div class="modal-content cv-modal-spread" id="modal-cv">
-            <span class="close-btn" onclick="closeModals()">&times;</span>
 
             <div class="floating-pages-container" onclick="event.stopPropagation()">
                 <!-- Page 1 -->
@@ -540,7 +541,6 @@
 
         <!-- 7. Projects Modal -->
         <div class="modal-content glass" id="modal-projects" onclick="event.stopPropagation()">
-            <span class="close-btn" onclick="closeModals()">&times;</span>
             <h2 class="section-title"><i data-lucide="folder-open"></i> Side Projects & Portfolio</h2>
             <div class="project-list">
                 <div class="project-item">

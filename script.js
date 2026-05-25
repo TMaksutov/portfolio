@@ -3,6 +3,50 @@ const roomContainer = document.querySelector('.room-container');
 const panWrapper = document.getElementById('pan-wrapper');
 const hotspots = document.querySelectorAll('.hotspot');
 
+// Pre-process hotspot summaries to split text symbol-by-symbol
+document.querySelectorAll('.hotspot-summary').forEach(summary => {
+    let symbolIndex = 0;
+    
+    function recurse(node, isInPrompt) {
+        let currentPromptState = isInPrompt;
+        if (node.nodeType === Node.ELEMENT_NODE && node.tagName.toLowerCase() === 'i' && node.textContent.trim() === 'Click to explore') {
+            currentPromptState = true;
+        }
+
+        if (node.nodeType === Node.TEXT_NODE) {
+            const text = node.nodeValue;
+            const parent = node.parentNode;
+            const fragment = document.createDocumentFragment();
+            
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                if (char === ' ' || char === '\n' || char === '\r' || char === '\t') {
+                    fragment.appendChild(document.createTextNode(char));
+                } else {
+                    const span = document.createElement('span');
+                    span.className = 'summary-symbol';
+                    span.textContent = char;
+                    
+                    let delay = symbolIndex * 0.006; // 6ms delay per symbol
+                    if (currentPromptState) {
+                        delay += 1.0; // Dynamic 1-second delay offset after previous text finishes
+                    }
+                    
+                    span.style.transitionDelay = `${delay}s`;
+                    symbolIndex++;
+                    fragment.appendChild(span);
+                }
+            }
+            parent.replaceChild(fragment, node);
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+            if (node.tagName.toLowerCase() === 'br') return;
+            Array.from(node.childNodes).forEach(child => recurse(child, currentPromptState));
+        }
+    }
+    
+    Array.from(summary.childNodes).forEach(child => recurse(child, false));
+});
+
 let globalMouseX = 0;
 let globalMouseY = 0;
 
@@ -420,7 +464,7 @@ function runParallax(mouseX, mouseY) {
         if(screensBgWrapper) screensBgWrapper.style.transform = `translate(${bgMoveX}%, ${bgMoveY}%)`;
     }
 
-    // 2. Handle 3D Rotation for Hovered Hotspot
+    // 2. Handle Parallax Translation for Hovered Hotspot (without 3D rotation)
     hotspots.forEach(hotspot => {
         const rect = hotspot.getBoundingClientRect();
         if (mouseX >= rect.left - 10 && mouseX <= rect.right + 10 &&
@@ -429,21 +473,21 @@ function runParallax(mouseX, mouseY) {
             const centerY = rect.top  + rect.height / 2;
             const dx = (mouseX - centerX) / (rect.width  / 2 + 50);
             const dy = (mouseY - centerY) / (rect.height / 2 + 50);
-            const rotateX = -dy * 45;
-            const rotateY =  dx * 45;
+            const moveX = dx * 15;
+            const moveY = dy * 15;
             const label   = hotspot.querySelector('.hotspot-label');
             const summary = hotspot.querySelector('.hotspot-summary');
-            if (label)   label.style.transform   = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(20px)`;
-            if (summary) summary.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(10px)`;
+            if (label)   label.style.transform   = `translate(${moveX}px, ${moveY}px) scale(1.1)`;
+            if (summary) summary.style.transform = `translate(${moveX}px, ${moveY}px)`;
         } else {
             const label   = hotspot.querySelector('.hotspot-label');
             const summary = hotspot.querySelector('.hotspot-summary');
-            if (label)   label.style.transform   = `rotateX(0) rotateY(0) translateZ(0)`;
-            if (summary) summary.style.transform = `rotateX(0) rotateY(0) translateZ(0) translateY(10px)`;
+            if (label)   label.style.transform   = `translate(0, 0)`;
+            if (summary) summary.style.transform = `translate(0, 10px)`;
         }
     });
 
-    // 3. Handle 3D Rotation for Floating Text Mode Modal
+    // 3. Handle Parallax Translation for Floating Text Mode Modal (without 3D rotation)
     const summaryModal = document.getElementById('modal-summary');
     if (summaryModal && summaryModal.classList.contains('active') && summaryModal.classList.contains('floating-text-mode')) {
         const rect    = summaryModal.getBoundingClientRect();
@@ -451,13 +495,13 @@ function runParallax(mouseX, mouseY) {
         const centerY = rect.top  + rect.height / 2;
         const dx      = (mouseX - centerX) / (window.innerWidth  / 2);
         const dy      = (mouseY - centerY) / (window.innerHeight / 2);
-        const rotateX = -dy * 10;
-        const rotateY =  dx * 10;
+        const moveX   = dx * 15;
+        const moveY   = dy * 15;
         const title   = summaryModal.querySelector('.section-title');
         const texts   = summaryModal.querySelectorAll('.summary-text');
-        if (title) title.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(20px)`;
+        if (title) title.style.transform = `translate(${moveX}px, ${moveY}px)`;
         texts.forEach(text => {
-            text.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(10px)`;
+            text.style.transform = `translate(${moveX}px, ${moveY}px)`;
         });
     }
 }
@@ -579,7 +623,7 @@ function closeModals() {
         }
         
         // Fade out the close button smoothly
-        const closeBtn = contactsModal.querySelector('.close-btn');
+        const closeBtn = overlay.querySelector('.close-btn');
         if (closeBtn) {
             closeBtn.style.transition = 'opacity 0.3s ease';
             closeBtn.style.opacity = '0';

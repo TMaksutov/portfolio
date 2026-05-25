@@ -1792,8 +1792,9 @@ body.contacts-active * {
     font-family: 'DM Sans', 'Inter', sans-serif;
     font-size: clamp(13px, 1.8vw, 18px);
     font-weight: 500;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    text-transform: none;
+    line-height: 1.4;
     color: #ffffff;
     margin-top: 6px;
     display: block;
@@ -1807,6 +1808,17 @@ body.contacts-active * {
     text-transform: uppercase;
     color: rgba(245,240,232,0.55);
     margin-top: 5px;
+    display: block;
+}
+
+.career-caption-location {
+    font-family: 'DM Sans', 'Inter', sans-serif;
+    font-size: clamp(10px, 1.1vw, 12px);
+    font-weight: 300;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(245,240,232,0.4);
+    margin-top: 4px;
     display: block;
 }
 

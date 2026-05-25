@@ -1036,7 +1036,7 @@ if (fsBtn) {
     const CAREER_TOTAL    = 6;
     const CAREER_DURATION = 800;
     const CAREER_AUTO_MS  = 6000;
-    const CAREER_LABELS   = ['2010', '2013', '2019', '2022', '2025', '2026'];
+    const CAREER_LABELS   = ['2010', '2010', '2013', '2017', '2020', '2022'];
 
     let careerCurrent    = 0;
     let careerAnimating  = false;

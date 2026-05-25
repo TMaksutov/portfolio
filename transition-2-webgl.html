@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Career Journey</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%; height: 100%;
+      background: #060608;
+      overflow: hidden;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    #canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      display: block;
+    }
+
+    /* ── Career text overlay ── */
+    #overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 0 72px 0;
+    }
+
+    .slide-text {
+      position: absolute;
+      bottom: 80px;
+      left: 0; right: 0;
+      padding: 0 60px;
+      opacity: 0;
+      transform: translateY(18px);
+      filter: blur(10px);
+      transition:
+        opacity 0.65s cubic-bezier(0.4, 0, 0.2, 1),
+        transform 0.65s cubic-bezier(0.4, 0, 0.2, 1),
+        filter 0.65s cubic-bezier(0.4, 0, 0.2, 1);
+      will-change: opacity, transform, filter;
+    }
+
+    .slide-text.active {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0px);
+    }
+
+    .slide-text.exit {
+      opacity: 0;
+      transform: translateY(-14px);
+      filter: blur(8px);
+    }
+
+    .slide-year {
+      font-size: clamp(11px, 1.4vw, 14px);
+      font-weight: 500;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: #f59e0b;
+      margin-bottom: 10px;
+    }
+
+    .slide-company {
+      font-size: clamp(28px, 4.5vw, 58px);
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1.05;
+      margin-bottom: 8px;
+    }
+
+    .slide-role {
+      font-size: clamp(13px, 1.6vw, 18px);
+      font-weight: 300;
+      color: #c084fc;
+      letter-spacing: 0.04em;
+    }
+
+    /* ── Gradient vignette at bottom ── */
+    #vignette {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: 55vh;
+      background: linear-gradient(to top, rgba(6,6,8,0.92) 0%, rgba(6,6,8,0.55) 40%, transparent 100%);
+      pointer-events: none;
+      z-index: 9;
+    }
+
+    /* ── Navigation buttons ── */
+    #nav {
+      position: fixed;
+      bottom: 32px;
+      right: 60px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 20;
+    }
+
+    .nav-btn {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      border: 1px solid rgba(192, 132, 252, 0.35);
+      background: rgba(6, 6, 8, 0.6);
+      backdrop-filter: blur(12px);
+      color: #c084fc;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color 0.25s, background 0.25s, transform 0.2s;
+    }
+
+    .nav-btn:hover {
+      border-color: #c084fc;
+      background: rgba(192, 132, 252, 0.15);
+      transform: scale(1.08);
+    }
+
+    .nav-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* ── Slide counter ── */
+    #counter {
+      position: fixed;
+      bottom: 44px;
+      left: 60px;
+      z-index: 20;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      color: rgba(255,255,255,0.35);
+      pointer-events: none;
+    }
+
+    #counter span { color: rgba(255,255,255,0.75); }
+
+    /* ── Progress bar ── */
+    #progress-bar-wrap {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: 2px;
+      background: rgba(255,255,255,0.06);
+      z-index: 30;
+    }
+
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #c084fc, #f59e0b);
+      transition: width 0.05s linear;
+      box-shadow: 0 0 8px rgba(192, 132, 252, 0.6);
+    }
+
+    /* ── Dot indicators ── */
+    #dots {
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      z-index: 20;
+    }
+
+    .dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.25);
+      transition: background 0.3s, transform 0.3s;
+      cursor: pointer;
+    }
+
+    .dot.active {
+      background: #c084fc;
+      transform: scale(1.5);
+    }
+
+    /* ── Loading screen ── */
+    #loader {
+      position: fixed;
+      inset: 0;
+      background: #060608;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 20px;
+      transition: opacity 0.7s ease;
+    }
+
+    #loader.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .loader-ring {
+      width: 48px; height: 48px;
+      border: 2px solid rgba(192,132,252,0.15);
+      border-top-color: #c084fc;
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+    }
+
+    .loader-text {
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(192,132,252,0.5);
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+  <!-- Loading screen -->
+  <div id="loader">
+    <div class="loader-ring"></div>
+    <div class="loader-text">Loading</div>
+  </div>
+
+  <!-- WebGL canvas -->
+  <canvas id="canvas"></canvas>
+
+  <!-- Bottom vignette -->
+  <div id="vignette"></div>
+
+  <!-- Text overlays (one per slide) -->
+  <div id="overlay">
+    <div class="slide-text" id="text-0">
+      <div class="slide-year">2010</div>
+      <div class="slide-company">NPF Inkram</div>
+      <div class="slide-role">Automation Engineer</div>
+    </div>
+    <div class="slide-text" id="text-1">
+      <div class="slide-year">2013</div>
+      <div class="slide-company">Gazprom</div>
+      <div class="slide-role">Chief Technologist</div>
+    </div>
+    <div class="slide-text" id="text-2">
+      <div class="slide-year">2019</div>
+      <div class="slide-company">Nord Stream 2</div>
+      <div class="slide-role">Gas Engineer</div>
+    </div>
+    <div class="slide-text" id="text-3">
+      <div class="slide-year">2022</div>
+      <div class="slide-company">Belimed</div>
+      <div class="slide-role">Project Manager</div>
+    </div>
+    <div class="slide-text" id="text-4">
+      <div class="slide-year">2026</div>
+      <div class="slide-company">Belimed</div>
+      <div class="slide-role">AI &amp; Data Lead</div>
+    </div>
+  </div>
+
+  <!-- Counter -->
+  <div id="counter"><span id="cur">01</span> / 05</div>
+
+  <!-- Dot indicators -->
+  <div id="dots">
+    <div class="dot active" data-i="0"></div>
+    <div class="dot" data-i="1"></div>
+    <div class="dot" data-i="2"></div>
+    <div class="dot" data-i="3"></div>
+    <div class="dot" data-i="4"></div>
+  </div>
+
+  <!-- Navigation -->
+  <div id="nav">
+    <button class="nav-btn" id="btn-prev" aria-label="Previous">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <button class="nav-btn" id="btn-next" aria-label="Next">
+      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+  </div>
+
+  <!-- Progress bar -->
+  <div id="progress-bar-wrap">
+    <div id="progress-bar"></div>
+  </div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ─────────────────────────────────────────────
+     CAREER DATA
+  ───────────────────────────────────────────── */
+  const SLIDES = [
+    { img: 'assets/images/1.png' },
+    { img: 'assets/images/2.png' },
+    { img: 'assets/images/3.png' },
+    { img: 'assets/images/4.png' },
+    { img: 'assets/images/5.png' },
+  ];
+
+  const AUTO_INTERVAL = 6000; // ms
+
+  /* ─────────────────────────────────────────────
+     THREE.JS SETUP
+  ───────────────────────────────────────────── */
+  const canvas = document.getElementById('canvas');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: false });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+
+  /* ─────────────────────────────────────────────
+     GLSL SHADERS
+  ───────────────────────────────────────────── */
+  const vertexShader = /* glsl */`
+    varying vec2 vUv;
+    void main() {
+      vUv = uv;
+      gl_Position = vec4(position, 1.0);
+    }
+  `;
+
+  const fragmentShader = /* glsl */`
+    precision highp float;
+
+    uniform sampler2D uTexture0;   // current slide
+    uniform sampler2D uTexture1;   // next slide
+    uniform float     uProgress;   // 0 → 1
+    uniform vec2      uResolution;
+    uniform vec2      uOrigin;     // normalized click origin (0-1)
+
+    varying vec2 vUv;
+
+    // ── Pseudo-random noise ──────────────────────
+    float noise(vec2 uv) {
+      return fract(sin(dot(uv, vec2(12.9898, 78.233))) * 43758.5453);
+    }
+
+    // ── Smooth bell curve peak at 0.5 ────────────
+    float bell(float t) {
+      return sin(t * 3.14159265);
+    }
+
+    void main() {
+      vec2 uv = vUv;
+
+      // Aspect-corrected distance from origin
+      float aspect = uResolution.x / uResolution.y;
+      vec2 delta = (uv - uOrigin) * vec2(aspect, 1.0);
+      float dist = length(delta);
+
+      float prog = uProgress;
+      float strength = bell(prog);  // peaks in the middle
+
+      // ── Circular ripple ──────────────────────────
+      float rippleSpeed  = 2.8;
+      float rippleFreq   = 14.0;
+      float rippleRadius = prog * rippleSpeed;
+
+      float ring = smoothstep(0.05, 0.0, abs(dist - rippleRadius));
+      float wave = sin((dist - rippleRadius) * rippleFreq) * ring;
+
+      // ── Organic noise warp ───────────────────────
+      float n = (noise(uv * 4.5 + prog * 0.7) - 0.5) * 0.012 * strength;
+
+      // Combined displacement magnitude
+      float disp = (wave * 0.045 + strength * 0.04) * smoothstep(2.5, 0.0, dist);
+
+      vec2 dispDir = normalize(delta + vec2(0.0001));
+      vec2 warpedUV = uv + dispDir * disp + n;
+
+      // ── Chromatic aberration (RGB split) ─────────
+      float ca = 0.018 * strength * (1.0 - smoothstep(0.0, 0.8, dist));
+      vec2 caOffset = dispDir * ca;
+
+      // Sample current texture with chromatic split
+      float r0 = texture2D(uTexture0, warpedUV + caOffset).r;
+      float g0 = texture2D(uTexture0, warpedUV).g;
+      float b0 = texture2D(uTexture0, warpedUV - caOffset).b;
+      vec4 col0 = vec4(r0, g0, b0, 1.0);
+
+      // Sample next texture with inverse split
+      float r1 = texture2D(uTexture1, warpedUV - caOffset).r;
+      float g1 = texture2D(uTexture1, warpedUV).g;
+      float b1 = texture2D(uTexture1, warpedUV + caOffset).b;
+      vec4 col1 = vec4(r1, g1, b1, 1.0);
+
+      // ── Reveal wipe: inside ripple shows new image ─
+      float reveal = smoothstep(rippleRadius - 0.25, rippleRadius + 0.05, dist);
+      // reveal = 1 far from center (old image), 0 close to center (new image already shown)
+      // Invert: inside ripple circle → new image
+      float blend = 1.0 - reveal;
+      // But we also mix globally with progress to ensure complete switch
+      blend = max(blend, smoothstep(0.65, 1.0, prog));
+
+      vec4 color = mix(col0, col1, blend);
+
+      // ── Subtle vignette at transition peak ───────
+      float vignette = 1.0 - strength * 0.18 * smoothstep(0.3, 1.0, dist);
+      color.rgb *= vignette;
+
+      gl_FragColor = color;
+    }
+  `;
+
+  /* ─────────────────────────────────────────────
+     PLANE + MATERIAL
+  ───────────────────────────────────────────── */
+  const geometry = new THREE.PlaneBufferGeometry(2, 2);
+
+  // Placeholder 1×1 white texture to avoid null binds
+  const placeholder = new THREE.DataTexture(new Uint8Array([255,255,255,255]), 1, 1, THREE.RGBAFormat);
+  placeholder.needsUpdate = true;
+
+  const uniforms = {
+    uTexture0:   { value: placeholder },
+    uTexture1:   { value: placeholder },
+    uProgress:   { value: 0.0 },
+    uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+    uOrigin:     { value: new THREE.Vector2(0.5, 0.5) },
+  };
+
+  const material = new THREE.ShaderMaterial({
+    vertexShader,
+    fragmentShader,
+    uniforms,
+  });
+
+  const mesh = new THREE.Mesh(geometry, material);
+  scene.add(mesh);
+
+  /* ─────────────────────────────────────────────
+     TEXTURE LOADING
+  ───────────────────────────────────────────── */
+  const loader = new THREE.TextureLoader();
+  const textures = new Array(SLIDES.length).fill(null);
+  let loadedCount = 0;
+
+  function loadTextures(callback) {
+    SLIDES.forEach((slide, i) => {
+      loader.load(
+        slide.img,
+        (tex) => {
+          tex.minFilter = THREE.LinearFilter;
+          tex.magFilter = THREE.LinearFilter;
+          tex.generateMipmaps = false;
+          textures[i] = tex;
+          loadedCount++;
+          if (loadedCount === SLIDES.length) callback();
+        },
+        undefined,
+        () => {
+          // On error: create a colored placeholder
+          const colors = [
+            [30, 15, 60],   // purple
+            [15, 30, 60],   // blue
+            [15, 50, 40],   // teal
+            [50, 30, 10],   // amber
+            [60, 10, 40],   // magenta
+          ];
+          const [r, g, b] = colors[i];
+          const data = new Uint8Array([r, g, b, 255]);
+          const t = new THREE.DataTexture(data, 1, 1, THREE.RGBAFormat);
+          t.needsUpdate = true;
+          textures[i] = t;
+          loadedCount++;
+          if (loadedCount === SLIDES.length) callback();
+        }
+      );
+    });
+  }
+
+  /* ─────────────────────────────────────────────
+     STATE
+  ───────────────────────────────────────────── */
+  let current   = 0;
+  let next      = 0;
+  let animating = false;
+  let progress  = 0;      // 0–1 transition progress
+  const DURATION = 1400;  // ms
+
+  let autoTimer   = null;
+  let autoStart   = 0;
+  let autoElapsed = 0;
+
+  const texts = Array.from(document.querySelectorAll('.slide-text'));
+  const dots  = Array.from(document.querySelectorAll('.dot'));
+  const curEl = document.getElementById('cur');
+  const bar   = document.getElementById('progress-bar');
+
+  /* ─────────────────────────────────────────────
+     TEXT / UI HELPERS
+  ───────────────────────────────────────────── */
+  function showText(idx) {
+    texts.forEach((t, i) => {
+      t.classList.remove('active', 'exit');
+      if (i === idx) {
+        // Force reflow before adding active class
+        void t.offsetWidth;
+        t.classList.add('active');
+      }
+    });
+    dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+    curEl.textContent = String(idx + 1).padStart(2, '0');
+  }
+
+  function hideText(idx) {
+    texts[idx].classList.remove('active');
+    texts[idx].classList.add('exit');
+    setTimeout(() => texts[idx].classList.remove('exit'), 700);
+  }
+
+  /* ─────────────────────────────────────────────
+     TRANSITION ENGINE
+  ───────────────────────────────────────────── */
+  let animStart = 0;
+
+  function startTransition(from, to, originX, originY) {
+    if (animating) return;
+    animating = true;
+
+    current = from;
+    next    = to;
+
+    uniforms.uTexture0.value = textures[from];
+    uniforms.uTexture1.value = textures[to];
+    uniforms.uProgress.value = 0;
+    uniforms.uOrigin.value.set(originX, originY);
+
+    animStart = performance.now();
+
+    hideText(from);
+  }
+
+  function easeInOut(t) {
+    return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  }
+
+  function advanceTo(idx, ox, oy) {
+    if (animating) return;
+    const from = current;
+    const to   = ((idx % SLIDES.length) + SLIDES.length) % SLIDES.length;
+    startTransition(from, to, ox, oy);
+    resetAutoAdvance();
+  }
+
+  /* ─────────────────────────────────────────────
+     AUTO-ADVANCE
+  ───────────────────────────────────────────── */
+  function resetAutoAdvance() {
+    clearInterval(autoTimer);
+    autoStart   = performance.now();
+    autoElapsed = 0;
+  }
+
+  /* ─────────────────────────────────────────────
+     RENDER LOOP
+  ───────────────────────────────────────────── */
+  function animate(now) {
+    requestAnimationFrame(animate);
+
+    // Transition animation
+    if (animating) {
+      const elapsed = now - animStart;
+      const t = Math.min(elapsed / DURATION, 1);
+      const ease = easeInOut(t);
+
+      uniforms.uProgress.value = ease;
+
+      if (t >= 1) {
+        animating = false;
+        uniforms.uProgress.value = 1.0;
+        // Swap: current becomes 'next'
+        current = next;
+        uniforms.uTexture0.value = textures[current];
+        uniforms.uTexture1.value = textures[current];
+        uniforms.uProgress.value = 0;
+        showText(current);
+      }
+    }
+
+    // Auto-advance progress bar
+    if (!animating) {
+      const elapsed = now - autoStart;
+      const pct = Math.min(elapsed / AUTO_INTERVAL, 1);
+      bar.style.width = (pct * 100) + '%';
+
+      if (elapsed >= AUTO_INTERVAL) {
+        const toIdx = (current + 1) % SLIDES.length;
+        advanceTo(toIdx, 0.5, 0.5);
+      }
+    } else {
+      bar.style.width = '0%';
+    }
+
+    renderer.render(scene, camera);
+  }
+
+  /* ─────────────────────────────────────────────
+     EVENT LISTENERS
+  ───────────────────────────────────────────── */
+  document.getElementById('btn-next').addEventListener('click', (e) => {
+    e.stopPropagation();
+    advanceTo(current + 1, 0.5, 0.5);
+  });
+
+  document.getElementById('btn-prev').addEventListener('click', (e) => {
+    e.stopPropagation();
+    advanceTo(current - 1, 0.5, 0.5);
+  });
+
+  dots.forEach(d => {
+    d.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const i = parseInt(d.dataset.i, 10);
+      if (i !== current) advanceTo(i, 0.5, 0.5);
+    });
+  });
+
+  // Click canvas to advance (use click point as ripple origin)
+  canvas.addEventListener('click', (e) => {
+    const ox = e.clientX / window.innerWidth;
+    const oy = 1.0 - (e.clientY / window.innerHeight); // flip Y for WebGL
+    advanceTo(current + 1, ox, oy);
+  });
+
+  // Touch / swipe support
+  let touchStartX = 0;
+  canvas.addEventListener('touchstart', (e) => {
+    touchStartX = e.touches[0].clientX;
+  }, { passive: true });
+
+  canvas.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 40) {
+      const ox = e.changedTouches[0].clientX / window.innerWidth;
+      const oy = 1.0 - (e.changedTouches[0].clientY / window.innerHeight);
+      advanceTo(dx < 0 ? current + 1 : current - 1, ox, oy);
+    }
+  }, { passive: true });
+
+  // Keyboard
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') advanceTo(current + 1, 0.5, 0.5);
+    if (e.key === 'ArrowLeft')  advanceTo(current - 1, 0.5, 0.5);
+  });
+
+  // Resize
+  window.addEventListener('resize', () => {
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    uniforms.uResolution.value.set(window.innerWidth, window.innerHeight);
+  });
+
+  /* ─────────────────────────────────────────────
+     INIT
+  ───────────────────────────────────────────── */
+  loadTextures(() => {
+    uniforms.uTexture0.value = textures[0];
+    uniforms.uTexture1.value = textures[0];
+
+    showText(0);
+
+    const loaderEl = document.getElementById('loader');
+    loaderEl.classList.add('hidden');
+    setTimeout(() => { loaderEl.style.display = 'none'; }, 750);
+
+    autoStart = performance.now();
+    requestAnimationFrame(animate);
+  });
+
+})();
+</script>
+</body>
+</html>

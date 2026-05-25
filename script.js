@@ -544,6 +544,16 @@ function openModal(modalId) {
             h.style.opacity = '0';
             h.style.pointerEvents = 'none';
         });
+    } else if (modalId === 'modal-experience') {
+        // Full-screen filmstrip — don't reposition, don't blur room (filmstrip has its own bg)
+        modal.style.left = '0';
+        modal.style.top = '0';
+        modal.style.transform = 'none';
+        modal.classList.remove('floating-text-mode');
+        // Hide room behind it but don't blur (filmstrip handles its own bg)
+        roomContainer.classList.remove('gradient-blurred');
+        roomContainer.classList.remove('blurred');
+        roomContainer.classList.remove('alt-bg-active');
     } else {
         // Position modal in center
         modal.style.left = '50%';
@@ -610,7 +620,10 @@ function finishCloseModals() {
     document.querySelectorAll('.modal-content').forEach(m => {
         m.classList.remove('active');
         m.classList.remove('floating-text-mode');
-        m.style.transform = 'translate(-50%, -50%) scale(0.95)';
+        // Don't reset the filmstrip modal's transform
+        if (m.id !== 'modal-experience') {
+            m.style.transform = 'translate(-50%, -50%) scale(0.95)';
+        }
     });
     
     roomContainer.classList.remove('alt-bg-active');
@@ -654,8 +667,14 @@ function finishCloseModals() {
     }
 }
 
-// Initial positioning for modals (centered)
+// Initial positioning for modals (centered) — skip full-screen career filmstrip
 document.querySelectorAll('.modal-content').forEach(modal => {
+    if (modal.id === 'modal-experience') {
+        modal.style.left = '0';
+        modal.style.top = '0';
+        modal.style.transform = 'none';
+        return;
+    }
     modal.style.left = '50%';
     modal.style.top = '50%';
     modal.style.transform = 'translate(-50%, -50%) scale(0.95)';
@@ -1007,3 +1026,246 @@ if (fsBtn) {
 }
 
 
+/* ============================================================
+   CAREER JOURNEY FILMSTRIP — integrated slider logic
+   ============================================================ */
+
+(function initCareerSlider() {
+    'use strict';
+
+    const CAREER_TOTAL    = 6;
+    const CAREER_DURATION = 800;
+    const CAREER_AUTO_MS  = 6000;
+    const CAREER_LABELS   = ['2010', '2013', '2019', '2022', '2025', '2026'];
+
+    let careerCurrent    = 0;
+    let careerAnimating  = false;
+    let careerAutoTimer  = null;
+    let careerPRaf       = null;
+    let careerPStart     = null;
+
+    function careerGoTo(index, fromAuto) {
+        const track    = document.getElementById('careerTrack');
+        const timeline = document.getElementById('careerTimeline');
+        const counter  = document.getElementById('careerCounterCurrent');
+        const navPrev  = document.getElementById('careerNavPrev');
+        const navNext  = document.getElementById('careerNavNext');
+        const slides   = track ? Array.from(track.querySelectorAll('.career-slide')) : [];
+
+        if (!track || index === careerCurrent || careerAnimating) return;
+        if (index < 0 || index >= CAREER_TOTAL) return;
+
+        careerAnimating = true;
+        track.style.transform = `translateX(-${index * 100}vw)`;
+        slides[careerCurrent].classList.remove('active');
+        slides[index].classList.add('active');
+        careerCurrent = index;
+
+        if (timeline) {
+            timeline.querySelectorAll('.career-timeline-dot').forEach((d, i) => {
+                d.classList.toggle('active', i === careerCurrent);
+            });
+            timeline.querySelectorAll('.career-timeline-connector').forEach((c, i) => {
+                c.classList.toggle('passed', i < careerCurrent);
+            });
+        }
+
+        if (counter) counter.textContent = String(careerCurrent + 1).padStart(2, '0');
+        if (navPrev) navPrev.classList.toggle('disabled', careerCurrent === 0);
+        if (navNext) navNext.classList.toggle('disabled', careerCurrent === CAREER_TOTAL - 1);
+
+        setTimeout(() => { careerAnimating = false; }, CAREER_DURATION);
+    }
+
+
+
+    function buildCareerTimeline() {
+        const timeline = document.getElementById('careerTimeline');
+        if (!timeline) return;
+        timeline.innerHTML = '';
+        for (let i = 0; i < CAREER_TOTAL; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'career-timeline-dot' + (i === 0 ? ' active' : '');
+            dot.setAttribute('role', 'button');
+            dot.setAttribute('tabindex', '0');
+            dot.setAttribute('aria-label', 'Go to ' + CAREER_LABELS[i]);
+
+            const label = document.createElement('span');
+            label.className = 'career-timeline-label';
+            label.textContent = CAREER_LABELS[i];
+            dot.appendChild(label);
+
+            dot.addEventListener('click', (function(idx) {
+                return function() { careerGoTo(idx); };
+            })(i));
+            dot.addEventListener('keydown', (function(idx) {
+                return function(e) { if (e.key === 'Enter' || e.key === ' ') careerGoTo(idx); };
+            })(i));
+            timeline.appendChild(dot);
+
+            if (i < CAREER_TOTAL - 1) {
+                const conn = document.createElement('div');
+                conn.className = 'career-timeline-connector';
+                timeline.appendChild(conn);
+            }
+        }
+    }
+
+    function initCareerGrain() {
+        const canvas = document.getElementById('careerGrainCanvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        let w = 0, h = 0;
+        function resize() {
+            w = canvas.width  = canvas.offsetWidth  || window.innerWidth;
+            h = canvas.height = canvas.offsetHeight || window.innerHeight;
+        }
+        function drawGrain() {
+            if (!w || !h) return;
+            const img = ctx.createImageData(w, h);
+            const d = img.data;
+            for (let i = 0; i < d.length; i += 4) {
+                const v = (Math.random() * 255) | 0;
+                d[i] = d[i+1] = d[i+2] = v;
+                d[i+3] = 255;
+            }
+            ctx.putImageData(img, 0, 0);
+        }
+        let last = 0;
+        function loop(ts) {
+            if (ts - last > 1000 / 12) { drawGrain(); last = ts; }
+            requestAnimationFrame(loop);
+        }
+        window.addEventListener('resize', resize);
+        resize();
+        requestAnimationFrame(loop);
+    }
+
+    function careerParallax(mouseX, mouseY) {
+        const bg = document.getElementById('career-bg-parallax');
+        if (!bg) return;
+        const px = mouseX / window.innerWidth;
+        const py = mouseY / window.innerHeight;
+        const range = 4;
+        const mx = (px - 0.5) * -range;
+        const my = (py - 0.5) * -range;
+        bg.style.transform = `translate(${mx}%, ${my}%)`;
+    }
+
+    function setupCareerScroll() {
+        const modal = document.getElementById('modal-experience');
+        if (!modal) return;
+        let lastScroll = 0;
+        modal.addEventListener('wheel', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const now = Date.now();
+            if (now - lastScroll < 700) return;
+            lastScroll = now;
+            if (e.deltaY > 0) careerGoTo(careerCurrent + 1);
+            else              careerGoTo(careerCurrent - 1);
+        }, { passive: false });
+    }
+
+    function setupCareerTouch() {
+        const modal = document.getElementById('modal-experience');
+        if (!modal) return;
+        let tx = null, ty = null, dragging = false;
+        modal.addEventListener('touchstart', function(e) {
+            tx = e.touches[0].clientX;
+            ty = e.touches[0].clientY;
+            dragging = false;
+        }, { passive: true });
+        modal.addEventListener('touchmove', function(e) {
+            if (tx === null) return;
+            const dx = Math.abs(e.touches[0].clientX - tx);
+            const dy = Math.abs(e.touches[0].clientY - ty);
+            if (dx > dy && dx > 8) dragging = true;
+        }, { passive: true });
+        modal.addEventListener('touchend', function(e) {
+            if (!dragging || tx === null) { tx = null; return; }
+            const dx = e.changedTouches[0].clientX - tx;
+            if (Math.abs(dx) > 45) {
+                if (dx < 0) careerGoTo(careerCurrent + 1);
+                else        careerGoTo(careerCurrent - 1);
+            }
+            tx = null; dragging = false;
+        }, { passive: true });
+    }
+
+    /* ─── Keyboard (only when career modal is open) ─── */
+    document.addEventListener('keydown', function(e) {
+        const modal = document.getElementById('modal-experience');
+        if (!modal || !modal.classList.contains('active')) return;
+        if (e.key === 'ArrowRight') careerGoTo(careerCurrent + 1);
+        if (e.key === 'ArrowLeft')  careerGoTo(careerCurrent - 1);
+    });
+
+    /* ─── Wrap openModal to init/reset filmstrip ─── */
+    var _origOpen = window.openModal;
+    window.openModal = function(modalId) {
+        if (typeof _origOpen === 'function') _origOpen(modalId);
+
+        if (modalId === 'modal-experience') {
+            var track = document.getElementById('careerTrack');
+            if (track) {
+                track.style.transition = 'none';
+                track.style.transform  = 'translateX(0)';
+                setTimeout(function() {
+                    track.style.transition = 'transform ' + CAREER_DURATION + 'ms cubic-bezier(0.77, 0, 0.175, 1)';
+                }, 50);
+            }
+            var slides = track ? Array.from(track.querySelectorAll('.career-slide')) : [];
+            slides.forEach(function(s, i) { s.classList.toggle('active', i === 0); });
+            careerCurrent = 0;
+
+            var counter  = document.getElementById('careerCounterCurrent');
+            var navPrev  = document.getElementById('careerNavPrev');
+            var navNext  = document.getElementById('careerNavNext');
+            var timeline = document.getElementById('careerTimeline');
+            if (counter)  counter.textContent = '01';
+            if (navPrev)  navPrev.classList.add('disabled');
+            if (navNext)  navNext.classList.remove('disabled');
+            if (timeline) {
+                timeline.querySelectorAll('.career-timeline-dot').forEach(function(d, i) {
+                    d.classList.toggle('active', i === 0);
+                });
+                timeline.querySelectorAll('.career-timeline-connector').forEach(function(c) {
+                    c.classList.remove('passed');
+                });
+            }
+
+            careerParallax(
+                typeof virtMouseX !== 'undefined' ? virtMouseX : window.innerWidth / 2,
+                typeof virtMouseY !== 'undefined' ? virtMouseY : window.innerHeight / 2
+            );
+        }
+    };
+
+    /* ─── Wrap closeModals ─── */
+    var _origClose = window.closeModals;
+    window.closeModals = function() {
+        if (typeof _origClose === 'function') _origClose();
+    };
+
+    /* ─── Sync parallax from main room mouse tracking ─── */
+    document.addEventListener('mousemove', function(e) {
+        var modal = document.getElementById('modal-experience');
+        if (modal && modal.classList.contains('active')) {
+            careerParallax(e.clientX, e.clientY);
+        }
+    });
+
+    /* ─── Nav button clicks (event delegation) ─── */
+    document.addEventListener('click', function(e) {
+        if (e.target.closest && e.target.closest('#careerNavPrev')) careerGoTo(careerCurrent - 1);
+        if (e.target.closest && e.target.closest('#careerNavNext')) careerGoTo(careerCurrent + 1);
+    });
+
+    /* ─── Boot ─── */
+    buildCareerTimeline();
+    initCareerGrain();
+    setupCareerScroll();
+    setupCareerTouch();
+
+})();

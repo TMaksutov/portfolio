@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="cv.css?v=2">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Cormorant+Garamond:wght@300;400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
@@ -334,22 +334,150 @@
             </div>
         </div>
 
-        <!-- 4. Experience Modal -->
-        <div class="modal-content glass" id="modal-experience" onclick="event.stopPropagation()">
-            <span class="close-btn" onclick="closeModals()">&times;</span>
-            <h2 class="section-title"><i data-lucide="briefcase"></i> Professional Experience</h2>
-            <div class="job"><b>Belimed AG</b> <small>(Jul 2022 - Present)</small><br><b>AI/Data Lead</b> | <b>Project
-                    Manager</b> | <b>Requirements & Test Engineer</b><br>Led R&D for medical devices, designing ML
-                platforms. Managed AI strategy and implemented System Engineering principles.</div>
-            <div class="job"><b>Nord Stream 2 AG</b> <small>(Jan 2020 - Jun 2022)</small><br><b>Gas Engineer</b><br>Led
-                commissioning for pipeline start-up. Product Owner/Developer for SCADA and hydraulic simulation tools.
+        <!-- 4. Experience Modal — Filmstrip Career Slider -->
+        <div class="modal-content career-filmstrip-modal" id="modal-experience" onclick="event.stopPropagation()">
+            <button class="career-close-btn" onclick="closeModals()">&times;</button>
+
+            <!-- Mouse parallax background (mirrors main room bg) -->
+            <div class="career-bg-parallax" id="career-bg-parallax">
+                <img src="assets/images/Main photo.png" alt="Room" class="career-bg-img career-bg-sharp">
+                <img src="assets/images/Main photo 2.png" alt="Room Alt" class="career-bg-img career-bg-alt" id="career-bg-alt">
+                <div class="career-bg-blur-overlay"></div>
             </div>
-            <div class="job"><b>Gazprom</b> <small>(Apr 2013 - Dec 2019)</small><br><b>Chief
-                    Technologist</b><br>Optimized Natural Gas Transmission Network, enhanced dispatch control systems,
-                and developed operational flow schemes.</div>
-            <div class="job"><b>Laboratory of NPF Inkram</b> <small>(Sep 2010 - Feb 2013)</small><br><b>Automation
-                    System Engineer</b><br>Equipment diagnostics, algorithms development, software engineering and
-                maintenance of PLC gas detection and control systems.</div>
+
+            <!-- SVG Film Grain Filter -->
+            <svg class="career-grain-svg" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <filter id="career-grain" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">
+                        <feTurbulence type="fractalNoise" baseFrequency="0.72 0.65" numOctaves="4" stitchTiles="stitch" result="noiseOut"/>
+                        <feColorMatrix type="saturate" values="0" in="noiseOut" result="grayNoise"/>
+                        <feBlend in="SourceGraphic" in2="grayNoise" mode="overlay"/>
+                    </filter>
+                </defs>
+            </svg>
+            <canvas class="career-grain-overlay" id="careerGrainCanvas"></canvas>
+
+            <!-- Progress Bar -->
+            <div class="career-progress-bar" id="careerProgressBar"></div>
+
+            <!-- Filmstrip Viewport -->
+            <div class="career-filmstrip-viewport">
+                <div class="career-filmstrip-track" id="careerTrack">
+
+                    <!-- SLIDE 1 -->
+                    <div class="career-slide active" data-index="0">
+                        <div class="career-slide-inner">
+                            <img class="career-slide-img" src="assets/images/1.png" alt="2010 – Automation System Engineer" draggable="false"/>
+                            <div class="career-slide-vignette"></div>
+                            <div class="career-slide-darken"></div>
+                            <div class="career-slide-caption">
+                                <span class="career-caption-year">2010</span>
+                                <span class="career-caption-divider"></span>
+                                <span class="career-caption-role">Automation System Engineer</span>
+                                <span class="career-caption-company">NPF Inkram</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SLIDE 2 -->
+                    <div class="career-slide" data-index="1">
+                        <div class="career-slide-inner">
+                            <img class="career-slide-img" src="assets/images/2.png" alt="2013 – Chief Technologist" draggable="false"/>
+                            <div class="career-slide-vignette"></div>
+                            <div class="career-slide-darken"></div>
+                            <div class="career-slide-caption">
+                                <span class="career-caption-year">2013</span>
+                                <span class="career-caption-divider"></span>
+                                <span class="career-caption-role">Chief Technologist</span>
+                                <span class="career-caption-company">Gazprom</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SLIDE 3 -->
+                    <div class="career-slide" data-index="2">
+                        <div class="career-slide-inner">
+                            <img class="career-slide-img" src="assets/images/3.png" alt="2019 – Gas Engineer" draggable="false"/>
+                            <div class="career-slide-vignette"></div>
+                            <div class="career-slide-darken"></div>
+                            <div class="career-slide-caption">
+                                <span class="career-caption-year">2019</span>
+                                <span class="career-caption-divider"></span>
+                                <span class="career-caption-role">Gas Engineer</span>
+                                <span class="career-caption-company">Nord Stream 2</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SLIDE 4 -->
+                    <div class="career-slide" data-index="3">
+                        <div class="career-slide-inner">
+                            <img class="career-slide-img" src="assets/images/4.png" alt="2022 – Project Manager" draggable="false"/>
+                            <div class="career-slide-vignette"></div>
+                            <div class="career-slide-darken"></div>
+                            <div class="career-slide-caption">
+                                <span class="career-caption-year">2022</span>
+                                <span class="career-caption-divider"></span>
+                                <span class="career-caption-role">Project Manager</span>
+                                <span class="career-caption-company">Belimed</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SLIDE 5 -->
+                    <div class="career-slide" data-index="4">
+                        <div class="career-slide-inner">
+                            <img class="career-slide-img" src="assets/images/5.png" alt="2025 – Requirements & Test Engineer" draggable="false"/>
+                            <div class="career-slide-vignette"></div>
+                            <div class="career-slide-darken"></div>
+                            <div class="career-slide-caption">
+                                <span class="career-caption-year">2025</span>
+                                <span class="career-caption-divider"></span>
+                                <span class="career-caption-role">Requirements &amp; Test Engineer</span>
+                                <span class="career-caption-company">Belimed</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SLIDE 6 -->
+                    <div class="career-slide" data-index="5">
+                        <div class="career-slide-inner">
+                            <img class="career-slide-img" src="assets/images/6.png" alt="2026 – AI &amp; Data Lead" draggable="false"/>
+                            <div class="career-slide-vignette"></div>
+                            <div class="career-slide-darken"></div>
+                            <div class="career-slide-caption">
+                                <span class="career-caption-year">2026</span>
+                                <span class="career-caption-divider"></span>
+                                <span class="career-caption-role">AI &amp; Data Lead</span>
+                                <span class="career-caption-company">Belimed</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div><!-- /careerTrack -->
+            </div><!-- /viewport -->
+
+            <!-- Nav Arrows -->
+            <button class="career-nav-arrow career-prev disabled" id="careerNavPrev" aria-label="Previous slide">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M17 6L9 14L17 22" stroke="rgba(245,240,232,0.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            <button class="career-nav-arrow career-next" id="careerNavNext" aria-label="Next slide">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M11 6L19 14L11 22" stroke="rgba(245,240,232,0.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+
+            <!-- Slide Counter -->
+            <div class="career-slide-counter">
+                <span class="career-current" id="careerCounterCurrent">01</span>
+                <span style="margin: 0 4px; opacity:0.4;">/</span>
+                <span id="careerCounterTotal">06</span>
+            </div>
+
+            <!-- Timeline -->
+            <nav class="career-timeline" id="careerTimeline" aria-label="Career navigation"></nav>
         </div>
 
         <!-- 5. CV Modal (Floating Pages) -->

@@ -529,6 +529,14 @@ window.addEventListener('load', () => {
     // Preload location and screens images as well!
     preloadLocationImages();
     preloadScreensImages();
+
+    // Preload career images and transition images for seamless dissolving
+    for (let i = 1; i <= 6; i++) {
+        const tImg = new Image();
+        tImg.src = `assets/images/${i}_.png`;
+        const mImg = new Image();
+        mImg.src = `assets/images/${i}.png`;
+    }
 });
 
 // Modal Logic
@@ -1078,7 +1086,7 @@ if (fsBtn) {
     'use strict';
 
     const CAREER_TOTAL    = 6;
-    const CAREER_DURATION = 800;
+    const CAREER_DURATION = 2400;
     const CAREER_AUTO_MS  = 6000;
     const CAREER_LABELS   = ['2010', '2010', '2013', '2017', '2020', '2022'];
 
@@ -1100,9 +1108,19 @@ if (fsBtn) {
         if (index < 0 || index >= CAREER_TOTAL) return;
 
         careerAnimating = true;
-        track.style.transform = `translateX(-${index * 100}vw)`;
-        slides[careerCurrent].classList.remove('active');
+
+        const randOld = Math.floor(Math.random() * 3) + 1;
+        const randNew = Math.floor(Math.random() * 3) + 1;
+
+        slides[careerCurrent].classList.remove('active', 'glitch-play', 'glitch-var-1', 'glitch-var-2', 'glitch-var-3');
+        void slides[careerCurrent].offsetWidth;
+        slides[careerCurrent].classList.add('glitch-play', `glitch-var-${randOld}`);
+        
         slides[index].classList.add('active');
+        slides[index].classList.remove('glitch-play', 'glitch-var-1', 'glitch-var-2', 'glitch-var-3');
+        void slides[index].offsetWidth;
+        slides[index].classList.add('glitch-play', `glitch-var-${randNew}`);
+        
         careerCurrent = index;
 
         if (timeline) {
@@ -1204,7 +1222,7 @@ if (fsBtn) {
             e.preventDefault();
             e.stopPropagation();
             const now = Date.now();
-            if (now - lastScroll < 700) return;
+            if (now - lastScroll < 1500) return;
             lastScroll = now;
             if (e.deltaY > 0) careerGoTo(careerCurrent + 1);
             else              careerGoTo(careerCurrent - 1);
@@ -1252,15 +1270,12 @@ if (fsBtn) {
 
         if (modalId === 'modal-experience') {
             var track = document.getElementById('careerTrack');
-            if (track) {
-                track.style.transition = 'none';
-                track.style.transform  = 'translateX(0)';
-                setTimeout(function() {
-                    track.style.transition = 'transform ' + CAREER_DURATION + 'ms cubic-bezier(0.77, 0, 0.175, 1)';
-                }, 50);
-            }
+
             var slides = track ? Array.from(track.querySelectorAll('.career-slide')) : [];
-            slides.forEach(function(s, i) { s.classList.toggle('active', i === 0); });
+            slides.forEach(function(s, i) { 
+                s.classList.toggle('active', i === 0); 
+                s.classList.remove('glitch-play', 'glitch-var-1', 'glitch-var-2', 'glitch-var-3');
+            });
             careerCurrent = 0;
 
             var counter  = document.getElementById('careerCounterCurrent');
@@ -1306,8 +1321,26 @@ if (fsBtn) {
         if (e.target.closest && e.target.closest('#careerNavNext')) careerGoTo(careerCurrent + 1);
     });
 
+    function initCareerGlitchLayers() {
+        document.querySelectorAll('.career-slide').forEach((slide, index) => {
+            const inner = slide.querySelector('.career-slide-inner');
+            const transImg = inner.querySelector('.career-slide-transition-img');
+            if (!transImg) return;
+            const src = transImg.src;
+            
+            for (let i = 1; i <= 3; i++) {
+                const layer = document.createElement('img');
+                layer.src = src;
+                layer.className = `career-slide-glitch-layer layer-${i}`;
+                layer.draggable = false;
+                inner.appendChild(layer);
+            }
+        });
+    }
+
     /* ─── Boot ─── */
     buildCareerTimeline();
+    initCareerGlitchLayers();
     initCareerGrain();
     setupCareerScroll();
     setupCareerTouch();

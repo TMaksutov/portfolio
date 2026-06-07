@@ -745,6 +745,121 @@ body.contacts-active * {
 }
 
 /* ============================================================
+   PORTFOLIO VIEW INTERACTIVE
+   ============================================================ */
+
+.portfolio-view {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 50; /* Above pan-wrapper, below modals */
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+    overflow: hidden;
+    background: #000;
+}
+
+.portfolio-view.active {
+    opacity: 1;
+    pointer-events: auto;
+    visibility: visible;
+}
+
+.portfolio-bg-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 120%;
+    height: 120%;
+    transform: translate(-8.33%, -8.33%);
+}
+
+.portfolio-bg-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+}
+
+.portfolio-close-btn {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    background: rgba(0,0,0,0.5);
+    border: 1px solid var(--glass-border);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 2rem;
+    cursor: pointer;
+    z-index: 100;
+    backdrop-filter: blur(5px);
+    transition: transform 0.3s ease, color 0.3s ease, background 0.3s ease;
+}
+
+.portfolio-close-btn:hover {
+    transform: scale(1.1) rotate(90deg);
+    color: var(--primary-color);
+    background: rgba(0,0,0,0.8);
+}
+
+/* 3D Objects on Table */
+.portfolio-objects-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Let clicks pass through empty spaces */
+}
+
+.draggable-3d-obj {
+    position: absolute;
+    width: auto;
+    max-width: 15%; /* Limit maximum size */
+    max-height: 25%; /* Ensure they don't get too tall */
+    cursor: grab;
+    pointer-events: auto; /* Enable interaction on objects */
+    transform-origin: bottom center;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.2s ease;
+    user-select: none;
+    -webkit-user-drag: none; /* Prevent default image dragging */
+    z-index: 10;
+    /* Transform variables for seamless combining of drag, perspective, and hover */
+    --tx: 0px;
+    --ty: 0px;
+    --perspective: 1;
+    --hover-scale: 1;
+    --hover-y: 0px;
+    transform: translate(var(--tx), var(--ty)) scale(calc(var(--perspective) * var(--hover-scale))) translateY(var(--hover-y));
+    /* Shadow 7: Stepped Long Cast Extrusion + Lighting Adjustments */
+    filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.15)) 
+            drop-shadow(4px 4px 0 rgba(0,0,0,0.12)) 
+            drop-shadow(6px 6px 0 rgba(0,0,0,0.09)) 
+            drop-shadow(8px 8px 0 rgba(0,0,0,0.06)) 
+            drop-shadow(10px 10px 5px rgba(0,0,0,0.2))
+            brightness(1.15) contrast(0.80) saturate(0.90);
+}
+
+
+
+.draggable-3d-obj.dragging {
+    cursor: grabbing;
+    transition: none; /* Instant follow when dragging */
+}
+
+/* ============================================================
    SCREENS VIEW INTERACTIVE
    ============================================================ */
 

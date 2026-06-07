@@ -6,7 +6,7 @@ const hotspots = document.querySelectorAll('.hotspot');
 // Pre-process hotspot summaries to split text symbol-by-symbol
 document.querySelectorAll('.hotspot-summary').forEach(summary => {
     let symbolIndex = 0;
-    
+
     function recurse(node, isInPrompt) {
         let currentPromptState = isInPrompt;
         if (node.nodeType === Node.ELEMENT_NODE && node.tagName.toLowerCase() === 'i' && node.textContent.trim() === 'Click to explore') {
@@ -17,7 +17,7 @@ document.querySelectorAll('.hotspot-summary').forEach(summary => {
             const text = node.nodeValue;
             const parent = node.parentNode;
             const fragment = document.createDocumentFragment();
-            
+
             for (let i = 0; i < text.length; i++) {
                 const char = text[i];
                 if (char === ' ' || char === '\n' || char === '\r' || char === '\t') {
@@ -26,12 +26,12 @@ document.querySelectorAll('.hotspot-summary').forEach(summary => {
                     const span = document.createElement('span');
                     span.className = 'summary-symbol';
                     span.textContent = char;
-                    
+
                     let delay = symbolIndex * 0.006; // 6ms delay per symbol
                     if (currentPromptState) {
                         delay += 1.0; // Dynamic 1-second delay offset after previous text finishes
                     }
-                    
+
                     span.style.transitionDelay = `${delay}s`;
                     symbolIndex++;
                     fragment.appendChild(span);
@@ -43,7 +43,7 @@ document.querySelectorAll('.hotspot-summary').forEach(summary => {
             Array.from(node.childNodes).forEach(child => recurse(child, currentPromptState));
         }
     }
-    
+
     Array.from(summary.childNodes).forEach(child => recurse(child, false));
 });
 
@@ -89,10 +89,10 @@ function preloadScreensImages(callback) {
         return;
     }
     isPreloadingScreens = true;
-    
+
     let loadedCount = 0;
     const total = screensImages.length;
-    
+
     screensImages.forEach(src => {
         const img = new Image();
         img.onload = img.onerror = () => {
@@ -120,10 +120,10 @@ function preloadLocationImages(callback) {
         return;
     }
     isPreloadingLocation = true;
-    
+
     let loadedCount = 0;
     const total = locationImages.length;
-    
+
     locationImages.forEach(src => {
         const img = new Image();
         img.onload = img.onerror = () => {
@@ -170,10 +170,10 @@ function initMask() {
 
 function startCondensation() {
     if (condensationInterval) clearInterval(condensationInterval);
-    
+
     let cycleTime = 0; // Elapsed time in current 8-second breathing cycle (ms)
     const tickRate = 50; // Update every 50ms
-    
+
     // Exhalation plume settings (placed slightly below center, e.g. Y=65%)
     const breathX = maskW * 0.5;
     const breathY = maskH * 0.65;
@@ -184,24 +184,24 @@ function startCondensation() {
             clearInterval(condensationInterval);
             return;
         }
-        
+
         cycleTime += tickRate;
         if (cycleTime >= 8000) {
             cycleTime = 0; // Reset cycle every 8 seconds (3s exhalation, 5s evaporation)
         }
-        
+
         const grad = maskCtx.createRadialGradient(breathX, breathY, 0, breathX, breathY, breathRadius);
         grad.addColorStop(0, 'rgba(0,0,0,1)'); // Center: warm moisture, dense and maximum blur
         grad.addColorStop(0.2, 'rgba(0,0,0,0.85)'); // Core remains strongly fogged
         grad.addColorStop(0.5, 'rgba(0,0,0,0.25)'); // Rapid drop-off: sides are significantly weaker/sharper
         grad.addColorStop(1, 'rgba(0,0,0,0)'); // Edge: vanishes completely into clear landscape
-        
+
         if (cycleTime < 3000) {
             // Phase 1 (0s to 3s): Active exhalation (fogging up)
             maskCtx.globalCompositeOperation = 'source-over';
             maskCtx.globalAlpha = 0.055; // Significantly increased (from 0.025) for dense, strong breaths
             maskCtx.fillStyle = grad;
-            
+
             maskCtx.beginPath();
             maskCtx.arc(breathX, breathY, breathRadius, 0, Math.PI * 2);
             maskCtx.fill();
@@ -211,12 +211,12 @@ function startCondensation() {
             maskCtx.globalCompositeOperation = 'destination-out';
             maskCtx.globalAlpha = 0.00165; // Re-balanced (0.055 * 3% = 0.00165) to preserve the 5% evaporation math
             maskCtx.fillStyle = grad;
-            
+
             maskCtx.beginPath();
             maskCtx.arc(breathX, breathY, breathRadius, 0, Math.PI * 2);
             maskCtx.fill();
         }
-        
+
         updateMask();
     }, tickRate);
 }
@@ -225,7 +225,7 @@ function revealWindowView() {
     if (windowView) {
         windowView.classList.add('active');
         initMask();
-        
+
         // Pause for 1 second before starting the first breath condensation cycle
         if (condensationDelayTimeout) clearTimeout(condensationDelayTimeout);
         condensationDelayTimeout = setTimeout(() => {
@@ -238,7 +238,7 @@ function revealWindowView() {
 
 function openWindowView() {
     if (!windowView) return;
-    
+
     if (locationImagesLoaded) {
         revealWindowView();
     } else {
@@ -270,18 +270,18 @@ function revealScreensView() {
         }
         screensView.classList.add('active');
         screensView.classList.add('entering');
-        
+
         // Remove 'entering' class after the sequential animation completes (5.8 seconds total)
         enteringTimeout = setTimeout(() => {
             screensView.classList.remove('entering');
             enteringTimeout = null;
         }, 5800);
-        
+
         const iframeLeft = document.getElementById('iframe-left');
         if (iframeLeft && (!iframeLeft.src || iframeLeft.src === 'about:blank' || iframeLeft.src === window.location.href)) {
             iframeLeft.src = 'https://gas-flows.com';
         }
-        
+
         const iframeRight = document.getElementById('iframe-right');
         if (iframeRight && (!iframeRight.src || iframeRight.src === 'about:blank' || iframeRight.src === window.location.href)) {
             iframeRight.src = 'https://data-forecast.com';
@@ -291,7 +291,7 @@ function revealScreensView() {
 
 function openScreensView() {
     if (!screensView) return;
-    
+
     if (screensImageLoaded) {
         revealScreensView();
     } else {
@@ -327,7 +327,7 @@ function closeScreensView() {
 function getWipePos(e) {
     if (!wipeLayer) return { x: 0, y: 0 };
     const rect = wipeLayer.getBoundingClientRect();
-    
+
     // Support touches and changedTouches safely
     let clientX = 0;
     let clientY = 0;
@@ -341,7 +341,7 @@ function getWipePos(e) {
         clientX = e.clientX;
         clientY = e.clientY;
     }
-    
+
     return {
         x: ((clientX - rect.left) / rect.width) * maskW,
         y: ((clientY - rect.top) / rect.height) * maskH
@@ -366,21 +366,21 @@ function drawSoftCircle(x, y, radius) {
 
 function wipeSegment(x, y, px, py) {
     const brushRadius = 24; // Generous soft wipe size (equivalent to ~160px on screen)
-    
+
     const dx = x - px;
     const dy = y - py;
     const dist = Math.sqrt(dx * dx + dy * dy);
-    
+
     // Continuous interpolation to ensure no gaps or beads when drawing fast
-    const steps = Math.max(1, Math.floor(dist / 2)); 
-    
+    const steps = Math.max(1, Math.floor(dist / 2));
+
     for (let i = 0; i <= steps; i++) {
         const t = i / steps;
         const cx = px + dx * t;
         const cy = py + dy * t;
         drawSoftCircle(cx, cy, brushRadius);
     }
-    
+
     updateMask();
 }
 
@@ -414,7 +414,7 @@ if (wipeLayer) {
     wipeLayer.addEventListener('mousedown', startWipe);
     window.addEventListener('mousemove', handleWipe);
     window.addEventListener('mouseup', stopWipe);
-    
+
     // Touch Listeners: Use { passive: false } to allow e.preventDefault() for uninterrupted mobile wiping.
     wipeLayer.addEventListener('touchstart', startWipe, { passive: false });
     window.addEventListener('touchmove', handleWipe, { passive: false });
@@ -429,7 +429,7 @@ hotspots.forEach(hotspot => {
 });
 
 // Virtual mouse — tracks real position normally, accumulated during pointer-lock drag
-let virtMouseX = window.innerWidth  / 2;
+let virtMouseX = window.innerWidth / 2;
 let virtMouseY = window.innerHeight / 2;
 
 // Parallax & 3D Hover Rotation Logic — callable with any x,y coordinates
@@ -447,13 +447,13 @@ function runParallax(mouseX, mouseY) {
         const bgRange = 15;
         const bgMoveX = -8.33 + (0.5 - px) * bgRange;
         const bgMoveY = -8.33 + (0.5 - py) * bgRange;
-        if(windowBgWrapper) windowBgWrapper.style.transform = `translate(${bgMoveX}%, ${bgMoveY}%)`;
+        if (windowBgWrapper) windowBgWrapper.style.transform = `translate(${bgMoveX}%, ${bgMoveY}%)`;
 
         const frameRangeX = 5;
         const frameRangeY = 9.09;
         const frameMoveX = -4.54 + (0.5 - px) * frameRangeX;
         const frameMoveY = -4.54 + (0.5 - py) * frameRangeY;
-        if(windowFrameWrapper) windowFrameWrapper.style.transform = `translate(${frameMoveX}%, ${frameMoveY}%)`;
+        if (windowFrameWrapper) windowFrameWrapper.style.transform = `translate(${frameMoveX}%, ${frameMoveY}%)`;
     }
 
     // Screens view parallax
@@ -461,28 +461,38 @@ function runParallax(mouseX, mouseY) {
         const bgRange = 15;
         const bgMoveX = -8.33 + (0.5 - px) * bgRange;
         const bgMoveY = -8.33 + (0.5 - py) * bgRange;
-        if(screensBgWrapper) screensBgWrapper.style.transform = `translate(${bgMoveX}%, ${bgMoveY}%)`;
+        if (screensBgWrapper) screensBgWrapper.style.transform = `translate(${bgMoveX}%, ${bgMoveY}%)`;
+    }
+
+    // Portfolio view parallax
+    const pView = document.getElementById('portfolio-view');
+    const pBgWrapper = document.getElementById('portfolio-bg-wrapper');
+    if (pView && pView.classList.contains('active')) {
+        const bgRange = 15;
+        const bgMoveX = -8.33 + (0.5 - px) * bgRange;
+        const bgMoveY = -8.33 + (0.5 - py) * bgRange;
+        if (pBgWrapper) pBgWrapper.style.transform = `translate(${bgMoveX}%, ${bgMoveY}%)`;
     }
 
     // 2. Handle Parallax Translation for Hovered Hotspot (without 3D rotation)
     hotspots.forEach(hotspot => {
         const rect = hotspot.getBoundingClientRect();
         if (mouseX >= rect.left - 10 && mouseX <= rect.right + 10 &&
-            mouseY >= rect.top - 10  && mouseY <= rect.bottom + 10) {
+            mouseY >= rect.top - 10 && mouseY <= rect.bottom + 10) {
             const centerX = rect.left + rect.width / 2;
-            const centerY = rect.top  + rect.height / 2;
-            const dx = (mouseX - centerX) / (rect.width  / 2 + 50);
+            const centerY = rect.top + rect.height / 2;
+            const dx = (mouseX - centerX) / (rect.width / 2 + 50);
             const dy = (mouseY - centerY) / (rect.height / 2 + 50);
             const moveX = dx * 15;
             const moveY = dy * 15;
-            const label   = hotspot.querySelector('.hotspot-label');
+            const label = hotspot.querySelector('.hotspot-label');
             const summary = hotspot.querySelector('.hotspot-summary');
-            if (label)   label.style.transform   = `translate(${moveX}px, ${moveY}px) scale(1.1)`;
+            if (label) label.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.1)`;
             if (summary) summary.style.transform = `translate(${moveX}px, ${moveY}px)`;
         } else {
-            const label   = hotspot.querySelector('.hotspot-label');
+            const label = hotspot.querySelector('.hotspot-label');
             const summary = hotspot.querySelector('.hotspot-summary');
-            if (label)   label.style.transform   = `translate(0, 0)`;
+            if (label) label.style.transform = `translate(0, 0)`;
             if (summary) summary.style.transform = `translate(0, 10px)`;
         }
     });
@@ -490,15 +500,15 @@ function runParallax(mouseX, mouseY) {
     // 3. Handle Parallax Translation for Floating Text Mode Modal (without 3D rotation)
     const summaryModal = document.getElementById('modal-summary');
     if (summaryModal && summaryModal.classList.contains('active') && summaryModal.classList.contains('floating-text-mode')) {
-        const rect    = summaryModal.getBoundingClientRect();
-        const centerX = rect.left + rect.width  / 2;
-        const centerY = rect.top  + rect.height / 2;
-        const dx      = (mouseX - centerX) / (window.innerWidth  / 2);
-        const dy      = (mouseY - centerY) / (window.innerHeight / 2);
-        const moveX   = dx * 15;
-        const moveY   = dy * 15;
-        const title   = summaryModal.querySelector('.section-title');
-        const texts   = summaryModal.querySelectorAll('.summary-text');
+        const rect = summaryModal.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const dx = (mouseX - centerX) / (window.innerWidth / 2);
+        const dy = (mouseY - centerY) / (window.innerHeight / 2);
+        const moveX = dx * 15;
+        const moveY = dy * 15;
+        const title = summaryModal.querySelector('.section-title');
+        const texts = summaryModal.querySelectorAll('.summary-text');
         if (title) title.style.transform = `translate(${moveX}px, ${moveY}px)`;
         texts.forEach(text => {
             text.style.transform = `translate(${moveX}px, ${moveY}px)`;
@@ -521,12 +531,12 @@ document.addEventListener('mousemove', (e) => {
 window.addEventListener('load', () => {
     const img = new Image();
     img.src = 'assets/images/Main photo 2.png';
-    
+
     // Preload custom cursor images to eliminate delay/flash when hovering
     const clipImg = new Image();
     clipImg.src = 'assets/images/clip.png?v=3';
-    
-    // Preload location and screens images as well!
+
+    // Preload location, screens, and portfolio images as well!
     preloadLocationImages();
     preloadScreensImages();
 
@@ -546,10 +556,10 @@ function openModal(modalId) {
 
     // Show overlay
     overlay.classList.add('show');
-    
+
     // Hide all other modals first
     document.querySelectorAll('.modal-content').forEach(m => m.classList.remove('active'));
-    
+
     // Show target modal
     modal.classList.add('active');
 
@@ -629,17 +639,17 @@ function closeModals() {
             card.style.transition = 'transform 0.55s cubic-bezier(0.32, 0, 0.67, 0)';
             card.style.transform = 'translateY(1200px)';
         }
-        
+
         // Fade out the close button smoothly
         const closeBtn = overlay.querySelector('.close-btn');
         if (closeBtn) {
             closeBtn.style.transition = 'opacity 0.3s ease';
             closeBtn.style.opacity = '0';
         }
-        
+
         // Start fading out the room blur immediately
         roomContainer.classList.remove('blurred');
-        
+
         // After the animation finishes, fully deactivate everything
         setTimeout(() => {
             contactsModal.classList.remove('active');
@@ -654,14 +664,14 @@ function closeModals() {
                 closeBtn.style.opacity = '';
                 closeBtn.style.transition = '';
             }
-            
+
             // Run the rest of regular closeModals cleanup
             finishCloseModals();
         }, 550);
-        
+
         return;
     }
-    
+
     // Regular immediate close for other modals
     finishCloseModals();
 }
@@ -677,11 +687,11 @@ function finishCloseModals() {
             m.style.transform = 'translate(-50%, -50%) scale(0.95)';
         }
     });
-    
+
     roomContainer.classList.remove('alt-bg-active');
     roomContainer.classList.remove('blurred');
     roomContainer.classList.remove('gradient-blurred');
-    
+
     // Reset transforms for summary modal inner text
     const summaryModal = document.getElementById('modal-summary');
     if (summaryModal) {
@@ -691,7 +701,7 @@ function finishCloseModals() {
         const textsAll = summaryModal.querySelectorAll('.summary-text');
         textsAll.forEach(text => text.style.transform = '');
     }
-    
+
     // Restore hotspots
     hotspots.forEach(h => {
         h.style.opacity = '';
@@ -743,7 +753,7 @@ let scratchY = 0;
 
 if (scratchCanvas) {
     const cardElement = document.getElementById('business-card');
-    
+
     function initCanvasSize() {
         if (!sCtx && cardElement.offsetWidth > 0) {
             scratchCanvas.width = cardElement.offsetWidth;
@@ -751,22 +761,22 @@ if (scratchCanvas) {
             sCtx = scratchCanvas.getContext('2d');
         }
     }
-    
+
     cardElement.addEventListener('mouseenter', initCanvasSize);
-    
+
     cardElement.addEventListener('mousedown', (e) => {
         initCanvasSize();
         isScratching = true;
         scratchX = e.offsetX;
         scratchY = e.offsetY;
     });
-    
+
     cardElement.addEventListener('mousemove', (e) => {
         if (!isScratching || !sCtx) return;
-        
+
         const x = e.offsetX;
         const y = e.offsetY;
-        
+
         // Highlight (bottom-right edge)
         sCtx.beginPath();
         sCtx.moveTo(scratchX + 0.5, scratchY + 0.5);
@@ -775,7 +785,7 @@ if (scratchCanvas) {
         sCtx.lineWidth = Math.random() * 1.5 + 1;
         sCtx.lineCap = 'round';
         sCtx.stroke();
-        
+
         // Shadow (top-left edge)
         sCtx.beginPath();
         sCtx.moveTo(scratchX - 0.5, scratchY - 0.5);
@@ -787,7 +797,7 @@ if (scratchCanvas) {
         scratchX = x;
         scratchY = y;
     });
-    
+
     window.addEventListener('mouseup', () => {
         isScratching = false;
     });
@@ -796,22 +806,22 @@ if (scratchCanvas) {
 document.addEventListener('mousemove', (e) => {
     const card = document.getElementById('business-card');
     const container = document.querySelector('.business-card-container');
-    
+
     if (!card || !container || !container.closest('.active') || card.classList.contains('falling')) return;
 
     const rect = container.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    
+
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
-    
+
     // Calculate rotation (max 15 degrees)
     const rotateX = (centerY - y) / (rect.height / 2) * 15;
     const rotateY = (x - centerX) / (rect.width / 2) * 15;
-    
+
     card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(50px)`;
-    
+
     // Add dynamic shadow based on tilt
     const shadowX = -rotateY * 2;
     const shadowY = rotateX * 2;
@@ -912,8 +922,8 @@ function makePanelDraggable(panel) {
         if (!zone) return;
         const zoneRect = zone.getBoundingClientRect();
         const panelRect = panel.getBoundingClientRect();
-        const lp = ((panelRect.left - zoneRect.left) / zoneRect.width  * 100).toFixed(1);
-        const tp = ((panelRect.top  - zoneRect.top)  / zoneRect.height * 100).toFixed(1);
+        const lp = ((panelRect.left - zoneRect.left) / zoneRect.width * 100).toFixed(1);
+        const tp = ((panelRect.top - zoneRect.top) / zoneRect.height * 100).toFixed(1);
         badge.innerHTML = `left: ${lp}%, top: ${tp}%`;
     }
 
@@ -928,19 +938,19 @@ function makePanelDraggable(panel) {
 
         e.preventDefault();
 
-        const zone     = panel.parentElement;
+        const zone = panel.parentElement;
         const zoneRect = zone.getBoundingClientRect();
         const panelRect = panel.getBoundingClientRect();
 
         // Start virtual panel position (px within zone)
         virtX = panelRect.left - zoneRect.left;
-        virtY = panelRect.top  - zoneRect.top;
+        virtY = panelRect.top - zoneRect.top;
 
         // Start fake cursor at real mouse position
         cursorX = e.clientX;
         cursorY = e.clientY;
-        fakeCursor.style.left    = cursorX + 'px';
-        fakeCursor.style.top     = cursorY + 'px';
+        fakeCursor.style.left = cursorX + 'px';
+        fakeCursor.style.top = cursorY + 'px';
         fakeCursor.style.display = 'block';
 
         panel.style.transition = 'none';
@@ -956,7 +966,7 @@ function makePanelDraggable(panel) {
 
     function onLockChange() {
         const locked = document.pointerLockElement === header ||
-                       document.mozPointerLockElement === header;
+            document.mozPointerLockElement === header;
         if (locked) {
             document.addEventListener('mousemove', onMouseMove);
         } else {
@@ -965,7 +975,7 @@ function makePanelDraggable(panel) {
     }
 
     function onMouseMove(e) {
-        const zone     = panel.parentElement;
+        const zone = panel.parentElement;
         const zoneRect = zone.getBoundingClientRect();
 
         // Accumulate raw delta — NO clamping on panel position
@@ -974,13 +984,13 @@ function makePanelDraggable(panel) {
         virtY += e.movementY;
 
         panel.style.left = virtX + 'px';
-        panel.style.top  = virtY + 'px';
+        panel.style.top = virtY + 'px';
 
         // Cursor IS clamped to zone edges — mouse stops at the screen border
         cursorX = Math.max(zoneRect.left, Math.min(cursorX + e.movementX, zoneRect.right));
-        cursorY = Math.max(zoneRect.top,  Math.min(cursorY + e.movementY, zoneRect.bottom));
+        cursorY = Math.max(zoneRect.top, Math.min(cursorY + e.movementY, zoneRect.bottom));
         fakeCursor.style.left = cursorX + 'px';
-        fakeCursor.style.top  = cursorY + 'px';
+        fakeCursor.style.top = cursorY + 'px';
 
         // Keep background parallax moving — accumulate into global virtual mouse
         virtMouseX = Math.max(0, Math.min(virtMouseX + e.movementX, window.innerWidth));
@@ -998,9 +1008,9 @@ function makePanelDraggable(panel) {
     function stopDrag() {
         panel.style.transition = '';
         fakeCursor.style.display = 'none';
-        document.removeEventListener('mousemove',          onMouseMove);
-        document.removeEventListener('mouseup',            onMouseUp);
-        document.removeEventListener('pointerlockchange',  onLockChange);
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+        document.removeEventListener('pointerlockchange', onLockChange);
         document.removeEventListener('mozpointerlockchange', onLockChange);
         updateBadge();
     }
@@ -1009,27 +1019,27 @@ function makePanelDraggable(panel) {
 }
 
 // Initialize
-const leftPanel  = document.querySelector('.screen-panel.screen-left');
+const leftPanel = document.querySelector('.screen-panel.screen-left');
 const rightPanel = document.querySelector('.screen-panel.screen-right');
-if (leftPanel)  makePanelDraggable(leftPanel);
+if (leftPanel) makePanelDraggable(leftPanel);
 if (rightPanel) makePanelDraggable(rightPanel);
 
 /* ============================================================
    INTERACT OVERLAY — click to enable iframe, leave panel to restore
    ============================================================ */
-document.querySelectorAll('.screen-panel').forEach(function(panel) {
+document.querySelectorAll('.screen-panel').forEach(function (panel) {
     var overlay = panel.querySelector('.panel-interact-overlay');
     var content = panel.querySelector('.panel-content');
     if (!overlay || !content) return;
 
     // Click overlay → enable iframe interaction
-    overlay.addEventListener('click', function() {
+    overlay.addEventListener('click', function () {
         overlay.style.display = 'none';
         content.classList.add('interactive');
     });
 
     // Mouse leaves the whole panel → restore overlay (parallax resumes)
-    panel.addEventListener('mouseleave', function() {
+    panel.addEventListener('mouseleave', function () {
         overlay.style.display = '';
         content.classList.remove('interactive');
     });
@@ -1052,7 +1062,7 @@ function toggleFullscreen() {
 document.addEventListener('fullscreenchange', () => {
     const fsBtn = document.getElementById('fullscreen-btn');
     if (!fsBtn) return;
-    
+
     const textSpan = fsBtn.querySelector('.fs-text');
     const shortcutSpan = fsBtn.querySelector('.fs-shortcut');
     if (document.fullscreenElement) {
@@ -1085,24 +1095,24 @@ if (fsBtn) {
 (function initCareerSlider() {
     'use strict';
 
-    const CAREER_TOTAL    = 6;
+    const CAREER_TOTAL = 6;
     const CAREER_DURATION = 2400;
-    const CAREER_AUTO_MS  = 6000;
-    const CAREER_LABELS   = ['2010', '2010', '2013', '2017', '2020', '2022'];
+    const CAREER_AUTO_MS = 6000;
+    const CAREER_LABELS = ['2010', '2010', '2013', '2017', '2020', '2022'];
 
-    let careerCurrent    = 0;
-    let careerAnimating  = false;
-    let careerAutoTimer  = null;
-    let careerPRaf       = null;
-    let careerPStart     = null;
+    let careerCurrent = 0;
+    let careerAnimating = false;
+    let careerAutoTimer = null;
+    let careerPRaf = null;
+    let careerPStart = null;
 
     function careerGoTo(index, fromAuto) {
-        const track    = document.getElementById('careerTrack');
+        const track = document.getElementById('careerTrack');
         const timeline = document.getElementById('careerTimeline');
-        const counter  = document.getElementById('careerCounterCurrent');
-        const navPrev  = document.getElementById('careerNavPrev');
-        const navNext  = document.getElementById('careerNavNext');
-        const slides   = track ? Array.from(track.querySelectorAll('.career-slide')) : [];
+        const counter = document.getElementById('careerCounterCurrent');
+        const navPrev = document.getElementById('careerNavPrev');
+        const navNext = document.getElementById('careerNavNext');
+        const slides = track ? Array.from(track.querySelectorAll('.career-slide')) : [];
 
         if (!track || index === careerCurrent || careerAnimating) return;
         if (index < 0 || index >= CAREER_TOTAL) return;
@@ -1115,12 +1125,12 @@ if (fsBtn) {
         slides[careerCurrent].classList.remove('active', 'glitch-play', 'glitch-var-1', 'glitch-var-2', 'glitch-var-3');
         void slides[careerCurrent].offsetWidth;
         slides[careerCurrent].classList.add('glitch-play', `glitch-var-${randOld}`);
-        
+
         slides[index].classList.add('active');
         slides[index].classList.remove('glitch-play', 'glitch-var-1', 'glitch-var-2', 'glitch-var-3');
         void slides[index].offsetWidth;
         slides[index].classList.add('glitch-play', `glitch-var-${randNew}`);
-        
+
         careerCurrent = index;
 
         if (timeline) {
@@ -1157,11 +1167,11 @@ if (fsBtn) {
             label.textContent = CAREER_LABELS[i];
             dot.appendChild(label);
 
-            dot.addEventListener('click', (function(idx) {
-                return function() { careerGoTo(idx); };
+            dot.addEventListener('click', (function (idx) {
+                return function () { careerGoTo(idx); };
             })(i));
-            dot.addEventListener('keydown', (function(idx) {
-                return function(e) { if (e.key === 'Enter' || e.key === ' ') careerGoTo(idx); };
+            dot.addEventListener('keydown', (function (idx) {
+                return function (e) { if (e.key === 'Enter' || e.key === ' ') careerGoTo(idx); };
             })(i));
             timeline.appendChild(dot);
 
@@ -1179,7 +1189,7 @@ if (fsBtn) {
         const ctx = canvas.getContext('2d');
         let w = 0, h = 0;
         function resize() {
-            w = canvas.width  = canvas.offsetWidth  || window.innerWidth;
+            w = canvas.width = canvas.offsetWidth || window.innerWidth;
             h = canvas.height = canvas.offsetHeight || window.innerHeight;
         }
         function drawGrain() {
@@ -1188,8 +1198,8 @@ if (fsBtn) {
             const d = img.data;
             for (let i = 0; i < d.length; i += 4) {
                 const v = (Math.random() * 255) | 0;
-                d[i] = d[i+1] = d[i+2] = v;
-                d[i+3] = 255;
+                d[i] = d[i + 1] = d[i + 2] = v;
+                d[i + 3] = 255;
             }
             ctx.putImageData(img, 0, 0);
         }
@@ -1218,14 +1228,14 @@ if (fsBtn) {
         const modal = document.getElementById('modal-experience');
         if (!modal) return;
         let lastScroll = 0;
-        modal.addEventListener('wheel', function(e) {
+        modal.addEventListener('wheel', function (e) {
             e.preventDefault();
             e.stopPropagation();
             const now = Date.now();
             if (now - lastScroll < 1500) return;
             lastScroll = now;
             if (e.deltaY > 0) careerGoTo(careerCurrent + 1);
-            else              careerGoTo(careerCurrent - 1);
+            else careerGoTo(careerCurrent - 1);
         }, { passive: false });
     }
 
@@ -1233,63 +1243,63 @@ if (fsBtn) {
         const modal = document.getElementById('modal-experience');
         if (!modal) return;
         let tx = null, ty = null, dragging = false;
-        modal.addEventListener('touchstart', function(e) {
+        modal.addEventListener('touchstart', function (e) {
             tx = e.touches[0].clientX;
             ty = e.touches[0].clientY;
             dragging = false;
         }, { passive: true });
-        modal.addEventListener('touchmove', function(e) {
+        modal.addEventListener('touchmove', function (e) {
             if (tx === null) return;
             const dx = Math.abs(e.touches[0].clientX - tx);
             const dy = Math.abs(e.touches[0].clientY - ty);
             if (dx > dy && dx > 8) dragging = true;
         }, { passive: true });
-        modal.addEventListener('touchend', function(e) {
+        modal.addEventListener('touchend', function (e) {
             if (!dragging || tx === null) { tx = null; return; }
             const dx = e.changedTouches[0].clientX - tx;
             if (Math.abs(dx) > 45) {
                 if (dx < 0) careerGoTo(careerCurrent + 1);
-                else        careerGoTo(careerCurrent - 1);
+                else careerGoTo(careerCurrent - 1);
             }
             tx = null; dragging = false;
         }, { passive: true });
     }
 
     /* ─── Keyboard (only when career modal is open) ─── */
-    document.addEventListener('keydown', function(e) {
+    document.addEventListener('keydown', function (e) {
         const modal = document.getElementById('modal-experience');
         if (!modal || !modal.classList.contains('active')) return;
         if (e.key === 'ArrowRight') careerGoTo(careerCurrent + 1);
-        if (e.key === 'ArrowLeft')  careerGoTo(careerCurrent - 1);
+        if (e.key === 'ArrowLeft') careerGoTo(careerCurrent - 1);
     });
 
     /* ─── Wrap openModal to init/reset filmstrip ─── */
     var _origOpen = window.openModal;
-    window.openModal = function(modalId) {
+    window.openModal = function (modalId) {
         if (typeof _origOpen === 'function') _origOpen(modalId);
 
         if (modalId === 'modal-experience') {
             var track = document.getElementById('careerTrack');
 
             var slides = track ? Array.from(track.querySelectorAll('.career-slide')) : [];
-            slides.forEach(function(s, i) { 
-                s.classList.toggle('active', i === 0); 
+            slides.forEach(function (s, i) {
+                s.classList.toggle('active', i === 0);
                 s.classList.remove('glitch-play', 'glitch-var-1', 'glitch-var-2', 'glitch-var-3');
             });
             careerCurrent = 0;
 
-            var counter  = document.getElementById('careerCounterCurrent');
-            var navPrev  = document.getElementById('careerNavPrev');
-            var navNext  = document.getElementById('careerNavNext');
+            var counter = document.getElementById('careerCounterCurrent');
+            var navPrev = document.getElementById('careerNavPrev');
+            var navNext = document.getElementById('careerNavNext');
             var timeline = document.getElementById('careerTimeline');
-            if (counter)  counter.textContent = '01';
-            if (navPrev)  navPrev.classList.add('disabled');
-            if (navNext)  navNext.classList.remove('disabled');
+            if (counter) counter.textContent = '01';
+            if (navPrev) navPrev.classList.add('disabled');
+            if (navNext) navNext.classList.remove('disabled');
             if (timeline) {
-                timeline.querySelectorAll('.career-timeline-dot').forEach(function(d, i) {
+                timeline.querySelectorAll('.career-timeline-dot').forEach(function (d, i) {
                     d.classList.toggle('active', i === 0);
                 });
-                timeline.querySelectorAll('.career-timeline-connector').forEach(function(c) {
+                timeline.querySelectorAll('.career-timeline-connector').forEach(function (c) {
                     c.classList.remove('passed');
                 });
             }
@@ -1303,12 +1313,12 @@ if (fsBtn) {
 
     /* ─── Wrap closeModals ─── */
     var _origClose = window.closeModals;
-    window.closeModals = function() {
+    window.closeModals = function () {
         if (typeof _origClose === 'function') _origClose();
     };
 
     /* ─── Sync parallax from main room mouse tracking ─── */
-    document.addEventListener('mousemove', function(e) {
+    document.addEventListener('mousemove', function (e) {
         var modal = document.getElementById('modal-experience');
         if (modal && modal.classList.contains('active')) {
             careerParallax(e.clientX, e.clientY);
@@ -1316,7 +1326,7 @@ if (fsBtn) {
     });
 
     /* ─── Nav button clicks (event delegation) ─── */
-    document.addEventListener('click', function(e) {
+    document.addEventListener('click', function (e) {
         if (e.target.closest && e.target.closest('#careerNavPrev')) careerGoTo(careerCurrent - 1);
         if (e.target.closest && e.target.closest('#careerNavNext')) careerGoTo(careerCurrent + 1);
     });
@@ -1327,7 +1337,7 @@ if (fsBtn) {
             const transImg = inner.querySelector('.career-slide-transition-img');
             if (!transImg) return;
             const src = transImg.src;
-            
+
             for (let i = 1; i <= 3; i++) {
                 const layer = document.createElement('img');
                 layer.src = src;
